@@ -1,4 +1,4 @@
-		<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -86,7 +86,7 @@
             margin-bottom: 20px;
         }
 
-        #copiar {
+        #copiar, #abrir-carrossel {
             background-color: #008CBA;
             color: #fff;
             border: none;
@@ -95,6 +95,48 @@
             cursor: pointer;
             font-size: 1.2em;
             width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #carrossel-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #carrossel {
+            max-width: 90%;
+            max-height: 70%;
+            margin-bottom: 20px;
+        }
+
+        .carrossel-imagem {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+
+        .carrossel-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-carrossel {
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
         }
     </style>
 </head>
@@ -109,10 +151,20 @@
         <div id="carrinho-items"></div>
         <p id="total"></p>
         <button id="copiar" onclick="copiarParaArea()">📋Copiar Lista</button>
+        <button id="abrir-carrossel" onclick="abrirCarrossel()">❓Não sabe o nome do set? Clique Aqui!</button>
+    </div>
+
+    <div id="carrossel-container">
+        <button class="btn-carrossel" onclick="fecharCarrossel()">Fechar</button>
+        <img id="carrossel" class="carrossel-imagem" src="" alt="Carrossel de Imagens">
+        <div class="carrossel-buttons">
+            <button class="btn-carrossel" onclick="anterior()">⟨</button>
+            <button class="btn-carrossel" onclick="proximo()">⟩</button>
+        </div>
     </div>
 
     <script>
-        const itens = {
+        onst itens = {
             "1 Billion": "R$1,49",
             "2ND Aniversário": "R$5,99",
             "3RD Aniversário": "R$1,99",
@@ -198,7 +250,14 @@
             "Yuletide": "R$9,99"
         };
 
+        const imagens = [
+            "https://imgur.com/FJqsfHH.png",
+            "https://imgur.com/PW6Q6jc.png",
+            "https://imgur.com/Xa4lJ3d.png"
+        ];
+
         const carrinho = [];
+        let indiceAtual = 0;
 
         function buscarItens() {
             const busca = document.getElementById('busca').value.toLowerCase();
@@ -255,14 +314,39 @@
             document.getElementById('total').innerHTML = `Total: R$${total.toFixed(2).replace('.', ',')}`;
         }
 
-function copiarParaArea() {
-    const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\n');
-    const totalTexto = `Total: ${document.getElementById('total').textContent}`;
-    const listaCompleta = `${texto}\n${totalTexto}`;
-    navigator.clipboard.writeText(listaCompleta).then(() => {
-        alert('Lista copiada para a área de transferência!');
-    });
-}
+        function copiarParaArea() {
+            const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\n');
+            const totalTexto = `Total: ${document.getElementById('total').textContent}`;
+            const listaCompleta = `${texto}\n${totalTexto}`;
+            navigator.clipboard.writeText(listaCompleta).then(() => {
+                alert('Lista copiada para a área de transferência!');
+            });
+        }
+
+        function abrirCarrossel() {
+            document.getElementById('carrossel-container').style.display = 'flex';
+            mostrarImagem();
+        }
+
+        function fecharCarrossel() {
+            document.getElementById('carrossel-container').style.display = 'none';
+        }
+
+        function mostrarImagem() {
+            const imagem = document.getElementById('carrossel');
+            imagem.src = imagens[indiceAtual];
+            imagem.style.display = 'block';
+        }
+
+        function proximo() {
+            indiceAtual = (indiceAtual + 1) % imagens.length;
+            mostrarImagem();
+        }
+
+        function anterior() {
+            indiceAtual = (indiceAtual - 1 + imagens.length) % imagens.length;
+            mostrarImagem();
+        }
     </script>
 </body>
 
