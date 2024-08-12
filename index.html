@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Itens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #E0E0E0;
+            text-align: center;
+        }
+        h1 {
+            margin: 20px 0;
+            font-size: 24px;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #E0E0E0;
+            border: none;
+            border-radius: 5px;
+        }
+        #resultado {
+            margin-top: 120px;
+            font-size: 18px;
+            padding: 10px;
+            width: 60%;
+            text-align: left;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+        .encontrado {
+            color: #76FF03;
+            text-align: justify;
+        }
+        .nao-encontrado, .procurando {
+            color: #FF5252;
+            background-color: #FFEBEE;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Busca de Itens</h1>
+    <input type="text" id="busca" placeholder="Digite o nome do item" oninput="buscarItem()">
+    <div id="resultado"></div>
+
+    <script>
+        const itens = {
+            "1 Billion": "R$1,49",
+            "2ND": "R$5,99",
+            "3RD": "R$1,99",
+            "4RD": "R$1,99",
+            "5RD": "R$0,99",
+            "6RD": "R$0,99",
+            "2019": "R$3,99",
+            "2020": "R$1,49",
+            "2021": "R$1,49",
+            "2022": "R$1,49",
+            "2023": "R$1,49",
+            "2024": "R$1,49",
+            "Acidic": "R$15,99",
+            "Alchemist Hunter": "R$7,99",
+            "Ancient Trident": "R$4,99",
+            "Ancestral Trident": "R$4,99",
+            "Black Light Madness": "R$1,49",
+            "Boneco de Neve (Snowman)": "R$0,99",
+            "Book of Fortunes": "R$1,50",
+            "Candy Cane Jar": "R$4,00",
+            "Celestial Witch Broom": "R$0,85",
+            "Classic": "R$8,50",
+            "Cocoa Machine": "R$8,99",
+            "Cozy Cocoa": "R$1,49",
+            "Casa de Gengibre (Gingerbread House)": "R$1,50",
+            "Cesta de Morango": "R$18,00",
+            "Cesta de Blueberry": "R$17,00",
+            "Cesta de Limao": "R$16,00",
+            "Caixão (Coffin)": "R$4,50",
+            "Chromatic Phoenix": "R$1,50",
+            "Chapéu sortudo (Lucky Top Hat)": "R$4,00",
+            "Cursed Circus Tent": "R$0,99",
+            "Dave Pumpkin": "R$1,49",
+            "Dark Bone": "R$20,00",
+            "Dark Mansion": "R$11,99",
+            "Devilish": "R$25,00",
+            "Doomthrust": "R$3,50",
+            "Eggnog Machine": "R$1,49",
+            "Enchanted Circus Tent": "R$0,99",
+            "Festive Candelabra": "R$8,00",
+            "Festive Pinecone": "R$0,99",
+            "Fiery phoenix": "R$6,00",
+            "Fish tank": "R$2,00",
+            "Frost Engine": "R$3,50",
+            "Grandfather Clock": "R$9,50",
+            "Haunted Circus Tent": "R$0,99",
+            "Icethrust": "R$3,50",
+            "JellyBean": "R$3,99",
+            "Jingle bells": "R$1,50",
+            "Krampus": "R$2,00",
+            "Light Bone": "R$8,00",
+            "Lil tree": "R$3,00",
+            "Lunar Witch Broom": "R$0,85",
+            "Lovesick": "R$17,00",
+            "Marching Drums": "R$8,00",
+            "Marine": "R$18,00",
+            "Merry Music Box": "R$15,90",
+            "Midnight Light": "R$4,00",
+            "Mothership": "R$7,80",
+            "Mystical Trident": "R$4,99",
+            "Owl tree": "R$1,99",
+            "Party Ballons": "R$45,00",
+            "Phantom Light": "R$15,00",
+            "Pinata": "R$13,50",
+            "Pumpkin Slice": "R$33,00",
+            "Quebra-Nozes Azul (Nutcracker)": "R$2,50",
+            "Quebra-Nozes Vermelho (Nutcracker)": "R$2,50",
+            "Santa Boot": "R$4,00",
+            "Santa Chimmey": "R$2,00",
+            "Santa Sleigh": "R$5,50",
+            "Snow Glob": "R$3,99",
+            "Solar Witch Broom": "R$0,85",
+            "Spooky Brew": "R$38,00",
+            "Toy Box": "R$4,50",
+            "Toy Elf": "R$3,00",
+            "Toy Santa": "R$3,00",
+            "Sweet Train": "R$0,90",
+            "Festive Train": "R$0,90",
+            "Winter Train": "R$0,90",
+            "Tombstone Bash": "R$4,90",
+            "Warlock Hunter": "R$7,50",
+            "Witch Hunter": "R$8,00",
+            "Yuletide": "R$11,50"
+        };
+
+        function buscarItem() {
+            const busca = document.getElementById('busca').value.trim().toLowerCase();
+            const resultado = document.getElementById('resultado');
+
+            if (busca.length < 3) {
+                resultado.textContent = "Procurando...";
+                resultado.className = "procurando";
+                return;
+            }
+
+            let encontrados = [];
+
+            for (let item in itens) {
+                if (item.toLowerCase().includes(busca)) {
+                    encontrados.push(`${item}: ${itens[item]}`);
+                }
+            }
+
+            if (encontrados.length > 0) {
+                resultado.innerHTML = encontrados.join('<br>');
+                resultado.className = "encontrado";
+            } else {
+                resultado.textContent = "Item não encontrado";
+                resultado.className = "nao-encontrado";
+            }
+        }
+    </script>
+</body>
+</html>
