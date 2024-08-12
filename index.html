@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+		<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -255,14 +255,14 @@
             document.getElementById('total').innerHTML = `Total: R$${total.toFixed(2).replace('.', ',')}`;
         }
 
-        function copiarParaArea() {
-            const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\\n');
-            const totalTexto = `Total: ${document.getElementById('total').textContent}`;
-            const listaCompleta = `${texto}\\n${totalTexto}`;
-            navigator.clipboard.writeText(listaCompleta).then(() => {
-                alert('Lista copiada para a área de transferência!');
-            });
-        }
+function copiarParaArea() {
+    const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\n');
+    const totalTexto = `Total: ${document.getElementById('total').textContent}`;
+    const listaCompleta = `${texto}\n${totalTexto}`;
+    navigator.clipboard.writeText(listaCompleta).then(() => {
+        alert('Lista copiada para a área de transferência!');
+    });
+}
     </script>
 </body>
 
