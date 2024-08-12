@@ -1,4 +1,4 @@
-		<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -16,7 +16,8 @@
         }
 
         #logo {
-            margin-top: 20px;
+            margin-top: 10px;
+            width: 150px;
         }
 
         h1 {
@@ -26,7 +27,7 @@
 
         input[type="text"] {
             padding: 10px;
-            width: 80%;
+            width: 90%;
             max-width: 600px;
             margin-bottom: 20px;
             font-size: 1.2em;
@@ -44,7 +45,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 10px 20%;
+            margin: 10px 5%;
         }
 
         .btn-add {
@@ -71,7 +72,7 @@
             background-color: #333;
             padding: 20px;
             border-radius: 10px;
-            width: 80%;
+            width: 90%;
             max-width: 600px;
             margin: 20px auto;
             text-align: left;
@@ -86,7 +87,7 @@
             margin-bottom: 20px;
         }
 
-        #copiar {
+        #copiar, #carrossel-botao {
             background-color: #008CBA;
             color: #fff;
             border: none;
@@ -95,6 +96,74 @@
             cursor: pointer;
             font-size: 1.2em;
             width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #carrossel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #carrossel img {
+            width: 80%;
+            max-width: 600px;
+            height: auto;
+        }
+
+        #carrossel-fechar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .carrossel-botoes {
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .carrossel-botoes button {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin: 0 10px;
+        }
+
+        @media (max-width: 768px) {
+            .item-encontrado {
+                margin: 10px 2%;
+                font-size: 1em;
+            }
+
+            #logo {
+                width: 120px;
+            }
+
+            #carrossel img {
+                width: 90%;
+            }
         }
     </style>
 </head>
@@ -108,12 +177,22 @@
         <h2>Itens Selecionados</h2>
         <div id="carrinho-items"></div>
         <p id="total"></p>
-        <button id="copiar" onclick="copiarParaArea()">📋Copiar Lista</button>
+        <button id="copiar" onclick="copiarParaArea()">📋 Copiar Lista</button>
+        <button id="carrossel-botao" onclick="mostrarCarrossel()">Não sabe o nome do set? Clique Aqui!</button>
+    </div>
+
+    <div id="carrossel">
+        <button id="carrossel-fechar" onclick="fecharCarrossel()">X</button>
+        <img id="carrossel-imagem" src="https://imgur.com/FJqsfHH.png" alt="Carrossel">
+        <div class="carrossel-botoes">
+            <button onclick="anteriorImagem()">❮</button>
+            <button onclick="proximaImagem()">❯</button>
+        </div>
     </div>
 
     <script>
         const itens = {
-            "1 Billion": "R$1,49",
+			"1 Billion": "R$1,49",
             "2ND Aniversário": "R$5,99",
             "3RD Aniversário": "R$1,99",
             "4RD Aniversário": "R$1,99",
@@ -196,9 +275,16 @@
             "Warlock Hunter": "R$4,50",
             "Witch Hunter": "R$6,00",
             "Yuletide": "R$9,99"
+            // Adicione mais itens conforme necessário
         };
 
         const carrinho = [];
+        const imagensCarrossel = [
+            "https://imgur.com/FJqsfHH.png",
+            "https://imgur.com/PW6Q6jc.png",
+            "https://imgur.com/Xa4lJ3d.png"
+        ];
+        let imagemAtual = 0;
 
         function buscarItens() {
             const busca = document.getElementById('busca').value.toLowerCase();
@@ -255,14 +341,38 @@
             document.getElementById('total').innerHTML = `Total: R$${total.toFixed(2).replace('.', ',')}`;
         }
 
-function copiarParaArea() {
-    const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\n');
-    const totalTexto = `Total: ${document.getElementById('total').textContent}`;
-    const listaCompleta = `${texto}\n${totalTexto}`;
-    navigator.clipboard.writeText(listaCompleta).then(() => {
-        alert('Lista copiada para a área de transferência!');
-    });
-}
+        function copiarParaArea() {
+            const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\n');
+            const totalTexto = `Total: ${document.getElementById('total').textContent}`;
+            const listaCompleta = `${texto}\n${totalTexto}`;
+            navigator.clipboard.writeText(listaCompleta).then(() => {
+                alert('Lista copiada para a área de transferência!');
+            });
+        }
+
+        function mostrarCarrossel() {
+            document.getElementById('carrossel').style.display = 'flex';
+            atualizarImagemCarrossel();
+        }
+
+        function fecharCarrossel() {
+            document.getElementById('carrossel').style.display = 'none';
+        }
+
+        function atualizarImagemCarrossel() {
+            const imagem = document.getElementById('carrossel-imagem');
+            imagem.src = imagensCarrossel[imagemAtual];
+        }
+
+        function anteriorImagem() {
+            imagemAtual = (imagemAtual > 0) ? imagemAtual - 1 : imagensCarrossel.length - 1;
+            atualizarImagemCarrossel();
+        }
+
+        function proximaImagem() {
+            imagemAtual = (imagemAtual < imagensCarrossel.length - 1) ? imagemAtual + 1 : 0;
+            atualizarImagemCarrossel();
+        }
     </script>
 </body>
 
