@@ -100,7 +100,7 @@
 </head>
 
 <body>
-    <img id="logo" src="https://imgur.com/UJ3jXts.png" alt="Logo" width="200">
+    <img id="logo" src="https://imgur.com/UJ3jXts.png" alt="Logo" width="150">
     <h1>Busca de Itens</h1>
     <input type="text" id="busca" placeholder="Digite o nome do item..." onkeyup="buscarItens()">
     <div id="resultado"></div>
@@ -214,7 +214,7 @@
 
             for (const [item, valor] of Object.entries(itens)) {
                 if (item.toLowerCase().includes(busca)) {
-                    resultado.innerHTML += `<div class="item-encontrado">${item} - ${valor}<button class="btn-add" onclick="adicionarAoCarrinho('${item}', '${valor}')">+</button></div>`;
+                    resultado.innerHTML += `<div class="item-encontrado">${item} - ${valor}<button class="btn-add" onclick="adicionarAoCarrinho('${item}', '${valor}')">➕</button></div>`;
                     encontrou = true;
                 }
             }
@@ -248,7 +248,7 @@
             let total = 0;
 
             carrinho.forEach((c, index) => {
-                carrinhoItems.innerHTML += `<div>${c.quantidade}x ${c.item} - ${c.valor} <button class="btn-remove" onclick="removerDoCarrinho(${index})">-</button></div>`;
+                carrinhoItems.innerHTML += `<div>${c.quantidade}x ${c.item} - ${c.valor} <button class="btn-remove" onclick="removerDoCarrinho(${index})">➖</button></div>`;
                 total += parseFloat(c.valor.replace('R$', '').replace(',', '.')) * c.quantidade;
             });
 
