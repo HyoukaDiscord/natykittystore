@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naty Kitty Store - Flee the Facility</title>
+    <title>Loja Virtual</title>
     <style>
         body {
             background-color: #181818;
@@ -166,6 +166,19 @@
             }
         }
     </style>
+ <script>
+        // Impedir visualizar código fonte
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 's') || e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        });
+
+        // Impedir inspeção com botão direito
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+    </script>
 </head>
 
 <body>
