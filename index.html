@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naty Kitty Store</title>
+    <title>Loja Virtual</title>
     <style>
         body {
             background-color: #181818;
@@ -87,9 +87,8 @@
             margin-bottom: 20px;
         }
 
-        #copiar,
-        #carrossel-botao {
-            background-color: #ff00c3;
+        #copiar, #carrossel-botao {
+            background-color: #008CBA;
             color: #fff;
             border: none;
             padding: 10px;
@@ -167,14 +166,19 @@
             }
         }
     </style>
-    <script>
+ <script>
+        // Impedir visualizar código fonte
         document.addEventListener('keydown', function (e) {
             if (e.ctrlKey && (e.key === 'u' || e.key === 's') || e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
                 e.preventDefault();
+                alert('Ação desabilitada.');
             }
         });
+
+        // Impedir inspeção com botão direito
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
+            alert('Ação desabilitada.');
         });
     </script>
 </head>
@@ -357,33 +361,38 @@
         function copiarParaArea() {
             const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\n');
             const totalTexto = `Total: ${document.getElementById('total').textContent}`;
-            const textoCompleto = `${texto}\n${totalTexto}`;
-
-            navigator.clipboard.writeText(textoCompleto).then(() => {
-                alert('Orçamento copiado para a área de transferência!');
+            const listaCompleta = `${texto}\n${totalTexto}`;
+            navigator.clipboard.writeText(listaCompleta).then(() => {
+                alert('Lista copiada para a área de transferência!');
             });
         }
 
         function mostrarCarrossel() {
             document.getElementById('carrossel').style.display = 'flex';
-            document.getElementById('carrossel-imagem').src = imagensCarrossel[imagemAtual];
+            atualizarImagemCarrossel();
         }
 
         function fecharCarrossel() {
             document.getElementById('carrossel').style.display = 'none';
         }
 
-        function proximaImagem() {
-            imagemAtual = (imagemAtual + 1) % imagensCarrossel.length;
-            document.getElementById('carrossel-imagem').src = imagensCarrossel[imagemAtual];
+        function atualizarImagemCarrossel() {
+            const imagem = document.getElementById('carrossel-imagem');
+            imagem.src = imagensCarrossel[imagemAtual];
         }
 
         function anteriorImagem() {
-            imagemAtual = (imagemAtual - 1 + imagensCarrossel.length) % imagensCarrossel.length;
-            document.getElementById('carrossel-imagem').src = imagensCarrossel[imagemAtual];
+            imagemAtual = (imagemAtual > 0) ? imagemAtual - 1 : imagensCarrossel.length - 1;
+            atualizarImagemCarrossel();
+        }
+
+        function proximaImagem() {
+            imagemAtual = (imagemAtual < imagensCarrossel.length - 1) ? imagemAtual + 1 : 0;
+            atualizarImagemCarrossel();
         }
     </script>
 </body>
+
     <footer style="text-align: center; margin-top: 20px;">
         <p>
             <a href="https://www.instagram.com/naty_kittystore" target="_blank" style="text-decoration: none; color: inherit;">
@@ -391,4 +400,5 @@
             </a>
         </p>
     </footer>
+
 </html>
