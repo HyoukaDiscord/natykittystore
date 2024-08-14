@@ -46,26 +46,28 @@
             align-items: center;
             justify-content: space-between;
             margin: 10px 5%;
+            flex-wrap: wrap;
+        }
+
+        .btn-add,
+        .btn-remove {
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-left: 10px;
         }
 
         .btn-add {
             background-color: #00ff00;
             color: #000;
             border: none;
-            padding: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
         }
 
         .btn-remove {
             background-color: #ff4d4d;
             color: #fff;
             border: none;
-            padding: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
         }
 
         #carrinho {
@@ -165,6 +167,21 @@
             #carrossel img {
                 width: 90%;
             }
+
+            #carrinho {
+                padding: 15px;
+            }
+
+            #copiar,
+            #carrossel-botao {
+                font-size: 1em;
+                padding: 8px;
+            }
+
+            #carrossel-fechar {
+                font-size: 1em;
+                padding: 8px;
+            }
         }
     </style>
     <script>
@@ -180,7 +197,7 @@
 </head>
 
 <body>
-    <img id="logo" src="https://imgur.com/UJ3jXts.png" alt="Logo" width="150">
+    <img id="logo" src="https://imgur.com/UJ3jXts.png" alt="Logo">
     <h1>Busca de Itens</h1>
     <input type="text" id="busca" placeholder="Digite o nome do item..." onkeyup="buscarItens()">
     <div id="resultado"></div>
@@ -203,7 +220,7 @@
 
     <script>
         const itens = {
-			"1 Billion": "R$1,49",
+	    "1 Billion": "R$1,49",
             "2ND Aniversário": "R$5,99",
             "3RD Aniversário": "R$1,99",
             "4RD Aniversário": "R$1,99",
