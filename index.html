@@ -13,6 +13,8 @@
             text-align: center;
             margin: 0;
             padding: 0;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         #logo {
@@ -193,6 +195,16 @@
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
+
+        // Ajustar o iframe para ser responsivo
+        window.onload = function () {
+            var iframe = document.querySelector("iframe");
+            if (iframe) {
+                iframe.style.width = "100%";
+                iframe.style.height = "100vh";
+                iframe.style.border = "none";
+            }
+        };
     </script>
 </head>
 
@@ -220,7 +232,7 @@
 
     <script>
         const itens = {
-	    "1 Billion": "R$1,49",
+"1 Billion": "R$1,49",
             "2ND Aniversário": "R$5,99",
             "3RD Aniversário": "R$1,99",
             "4RD Aniversário": "R$1,99",
@@ -293,7 +305,7 @@
             "Santa Sleigh": "R$5,50",
             "Snow Glob": "R$2,50",
             "Solar Witch Broom": "R$0,85",
-            "Spooky Brew": "R$40,00",
+            "Spooky Brew": "R$44,00",
             "Toy Box": "R$4,50",
             "Toy Elf": "R$3,00",
             "Toy Santa": "R$3,00",
