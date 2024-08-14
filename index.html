@@ -13,8 +13,6 @@
             text-align: center;
             margin: 0;
             padding: 0;
-            max-width: 100%;
-            overflow-x: hidden;
         }
 
         #logo {
@@ -195,16 +193,6 @@
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
-
-        // Ajustar o iframe para ser responsivo
-        window.onload = function () {
-            var iframe = document.querySelector("iframe");
-            if (iframe) {
-                iframe.style.width = "100%";
-                iframe.style.height = "100vh";
-                iframe.style.border = "none";
-            }
-        };
     </script>
 </head>
 
@@ -232,7 +220,7 @@
 
     <script>
         const itens = {
-"1 Billion": "R$1,49",
+	    "1 Billion": "R$1,49",
             "2ND Aniversário": "R$5,99",
             "3RD Aniversário": "R$1,99",
             "4RD Aniversário": "R$1,99",
