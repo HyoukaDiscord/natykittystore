@@ -378,7 +378,7 @@
 
         function copiarParaArea() {
             const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\n');
-            const totalTexto = `Total: ${document.getElementById('total').textContent}`;
+            const totalTexto = `${document.getElementById('total').textContent}`;
             const textoCompleto = `${texto}\n${totalTexto}`;
 
             navigator.clipboard.writeText(textoCompleto).then(() => {
