@@ -90,7 +90,8 @@
         }
 
         #copiar,
-        #carrossel-botao {
+        #carrossel-botao,
+        #filtro-preco {
             background-color: #ff69b4;
             color: #fff;
             border: none;
@@ -173,7 +174,8 @@
             }
 
             #copiar,
-            #carrossel-botao {
+            #carrossel-botao,
+            #filtro-preco {
                 font-size: 1em;
                 padding: 8px;
             }
@@ -196,7 +198,7 @@
     </script>
 </head>
 
-<body> 
+<body>
     <img id="logo" src="https://imgur.com/UJ3jXts.png" alt="Logo">
     <h1>Busca de Itens</h1>
     <input type="text" id="busca" placeholder="Digite o nome do item..." onkeyup="buscarItens()">
@@ -206,6 +208,7 @@
         <div id="carrinho-items"></div>
         <p id="total"></p>
         <button id="copiar" onclick="copiarParaArea()">📋Copiar Orçamento</button>
+        <button id="filtro-preco" onclick="redirecionarFiltro()">🔍 Filtro de Preço</button>
         <button id="carrossel-botao" onclick="mostrarCarrossel()">Não sabe o nome do set? Clique Aqui!</button>
     </div>
 
@@ -311,14 +314,13 @@
             // Adicione mais itens conforme necessário
         };
 
-        const carrinho = [];
-        const imagensCarrossel = [
-            "https://imgur.com/NPUE6Q8.png",
-            "https://imgur.com/mhzF1dk.png",
-            "https://imgur.com/dWeHz9v.png",
-            "https://imgur.com/HplFJB5.png",
-            "https://imgur.com/66Gg6WC.png"
+        const imagens = [
+            "https://imgur.com/FJqsfHH.png",
+            "https://imgur.com/PW6Q6jc.png",
+            "https://imgur.com/Xa4lJ3d.png"
         ];
+
+        let carrinho = [];
         let imagemAtual = 0;
 
         function buscarItens() {
@@ -327,68 +329,62 @@
             resultado.innerHTML = '';
 
             if (busca.length < 3) {
-                resultado.innerHTML = '<p>Procurando...</p>';
+                resultado.innerHTML = 'Procurando...';
                 return;
             }
 
-            let encontrou = false;
+            const encontrados = Object.keys(itens).filter(item => item.toLowerCase().includes(busca));
 
-            for (const [item, valor] of Object.entries(itens)) {
-                if (item.toLowerCase().includes(busca)) {
-                    resultado.innerHTML += `<div class="item-encontrado">${item} - ${valor}<button class="btn-add" onclick="adicionarAoCarrinho('${item}', '${valor}')">➕</button></div>`;
-                    encontrou = true;
-                }
-            }
-
-            if (!encontrou) {
-                resultado.innerHTML = '<p class="nao-encontrado">Item Não Encontrado</p>';
-            }
-        }
-
-        function adicionarAoCarrinho(item, valor) {
-            const index = carrinho.findIndex(c => c.item === item);
-            if (index === -1) {
-                carrinho.push({ item, valor, quantidade: 1 });
+            if (encontrados.length === 0) {
+                resultado.innerHTML = 'Nenhum item encontrado.';
             } else {
-                carrinho[index].quantidade += 1;
+                encontrados.forEach(item => {
+                    resultado.innerHTML += `
+                        <div class="item-encontrado">
+                            ${item} - ${itens[item]}
+                            <button class="btn-add" onclick="adicionarAoCarrinho('${item}')">Adicionar</button>
+                        </div>
+                    `;
+                });
             }
-            atualizarCarrinho();
         }
 
-        function removerDoCarrinho(index) {
-            carrinho[index].quantidade -= 1;
-            if (carrinho[index].quantidade === 0) {
-                carrinho.splice(index, 1);
+        function adicionarAoCarrinho(item) {
+            if (!carrinho.includes(item)) {
+                carrinho.push(item);
+                atualizarCarrinho();
             }
-            atualizarCarrinho();
         }
 
         function atualizarCarrinho() {
             const carrinhoItems = document.getElementById('carrinho-items');
+            const total = document.getElementById('total');
             carrinhoItems.innerHTML = '';
-            let total = 0;
+            let somaTotal = 0;
 
-            carrinho.forEach((c, index) => {
-                carrinhoItems.innerHTML += `<div>${c.quantidade}x ${c.item} - ${c.valor} <button class="btn-remove" onclick="removerDoCarrinho(${index})">➖</button></div>`;
-                total += parseFloat(c.valor.replace('R$', '').replace(',', '.')) * c.quantidade;
+            carrinho.forEach(item => {
+                carrinhoItems.innerHTML += `<div>${item} - ${itens[item]} <button class="btn-remove" onclick="removerDoCarrinho('${item}')">Remover</button></div>`;
+                somaTotal += parseFloat(itens[item].replace('R$', '').replace(',', '.'));
             });
 
-            document.getElementById('total').innerHTML = `Total: R$${total.toFixed(2).replace('.', ',')}`;
+            total.innerHTML = `Total: R$${somaTotal.toFixed(2)}`;
+        }
+
+        function removerDoCarrinho(item) {
+            carrinho = carrinho.filter(i => i !== item);
+            atualizarCarrinho();
         }
 
         function copiarParaArea() {
-            const texto = carrinho.map(c => `${c.quantidade}x ${c.item} - ${c.valor}`).join('\n');
-            const totalTexto = `${document.getElementById('total').textContent}`;
-            const textoCompleto = `${texto}\n${totalTexto}`;
-
-            navigator.clipboard.writeText(textoCompleto).then(() => {
+            const texto = carrinho.map(item => `${item} - ${itens[item]}`).join('\n') + `\nTotal: R$${(carrinho.reduce((acc, item) => acc + parseFloat(itens[item].replace('R$', '').replace(',', '.')), 0)).toFixed(2)}`;
+            navigator.clipboard.writeText(texto).then(() => {
                 alert('Orçamento copiado para a área de transferência!');
             });
         }
 
         function mostrarCarrossel() {
             document.getElementById('carrossel').style.display = 'flex';
-            document.getElementById('carrossel-imagem').src = imagensCarrossel[imagemAtual];
+            document.getElementById('carrossel-imagem').src = imagens[imagemAtual];
         }
 
         function fecharCarrossel() {
@@ -396,16 +392,20 @@
         }
 
         function proximaImagem() {
-            imagemAtual = (imagemAtual + 1) % imagensCarrossel.length;
-            document.getElementById('carrossel-imagem').src = imagensCarrossel[imagemAtual];
+            imagemAtual = (imagemAtual + 1) % imagens.length;
+            document.getElementById('carrossel-imagem').src = imagens[imagemAtual];
         }
 
         function anteriorImagem() {
-            imagemAtual = (imagemAtual - 1 + imagensCarrossel.length) % imagensCarrossel.length;
-            document.getElementById('carrossel-imagem').src = imagensCarrossel[imagemAtual];
+            imagemAtual = (imagemAtual - 1 + imagens.length) % imagens.length;
+            document.getElementById('carrossel-imagem').src = imagens[imagemAtual];
+        }
+
+        function redirecionarFiltro() {
+            window.location.href = 'filtro.html';
         }
     </script>
-<footer style="background-color: #181818; color: #fff; padding: 20px; text-align: center;">
+    <footer style="background-color: #181818; color: #fff; padding: 20px; text-align: center;">
     <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
         <a href="https://www.instagram.com/naty_kittystore/" target="_blank">
             <img src="https://imgur.com/e0Ah4Gt.png" alt="Instagram" style="width: 30px;">
@@ -422,4 +422,5 @@
     </div>
 </footer>
 </body>
+
 </html>
