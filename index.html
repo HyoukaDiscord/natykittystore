@@ -388,7 +388,7 @@
         function copiarParaArea() {
             const texto = carrinho.map(item => `${item} - ${itens[item]}`).join('\n') + `\nTotal: R$${(carrinho.reduce((acc, item) => acc + parseFloat(itens[item].replace('R$', '').replace(',', '.')), 0)).toFixed(2)}`;
             navigator.clipboard.writeText(texto).then(() => {
-                alert('Orçamento copiado para a área de transferência!');
+                alert('©️ Todos os direitos reservados à @naty_kittystore\nOrçamento copiado para a área de transferência!');
             });
         }
 
