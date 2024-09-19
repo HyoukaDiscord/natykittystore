@@ -13,7 +13,7 @@
     <meta property="og:description" content="A Naty Kitty Store oferece as melhores sets de marretas, marretão e gemas para Flee the Facility no Roblox. Quer saber como comprar marretão barato? Confira nossas ofertas! Compre seu marretão barato.">
     <meta property="og:image" content="https://imgur.com/UJ3jXts.png">
     <meta property="og:url" content="https://www.natykitty.store">
-      <style>
+    <style>
         body {
             background-color: #181818;
             font-family: Arial, sans-serif;
@@ -99,7 +99,8 @@
 
         #copiar,
         #carrossel-botao,
-        #filtro-preco {
+        #filtro-preco,
+        #comprar {
             background-color: #ff69b4;
             color: #fff;
             border: none;
@@ -109,6 +110,11 @@
             font-size: 1.2em;
             width: 100%;
             margin-bottom: 10px;
+        }
+
+        #comprar {
+            background-color: #fc0fc0;
+            color: #fff;
         }
 
         #carrossel {
@@ -183,7 +189,8 @@
 
             #copiar,
             #carrossel-botao,
-            #filtro-preco {
+            #filtro-preco,
+            #comprar {
                 font-size: 1em;
                 padding: 8px;
             }
@@ -208,16 +215,17 @@
 
 <body>
     <!-- <img id="logo" src="assets/logo.png" alt="Logo da Naty Kitty Store"> -->
- <img id="logo" src="assets/logo.png" alt="Logo da Naty Kitty Store" style="user-select: none; pointer-events: none;" onmousedown="return false;">
+    <img id="logo" src="assets/logo.png" alt="Logo da Naty Kitty Store" style="user-select: none; pointer-events: none;" onmousedown="return false;">
 
     <h1>Busca de Marretão</h1>
     <input type="text" id="busca" placeholder="Digite o nome da marreta..." onkeyup="buscarItens()">
     <div id="resultado"></div>
     <div id="carrinho">
-	<h3>Após copiar o Orçamento, mande mensagem para <span style="color: #FF69B4;">@naty_kittystore</span></h3>
+        <h3>Após <span style="color: #FF69B4;">Copiar o Orçamento</span>, clique em <span style="color: #FF69B4;">Comprar</span></h3>
         <div id="carrinho-items"></div>
         <p id="total"></p>
         <button id="copiar" onclick="copiarParaArea()">📋Copiar Orçamento</button>
+        <button id="comprar" onclick="redirecionarWhatsApp()">🛒 Comprar</button>
         <button id="filtro-preco" onclick="redirecionarFiltro()">🔍 Filtro de Preço</button>
         <button id="carrossel-botao" onclick="mostrarCarrossel()">Não sabe o nome do set? Clique Aqui!</button>
     </div>
@@ -418,22 +426,29 @@
         function redirecionarFiltro() {
             window.location.href = 'filtro.html';
         }
+
+        function redirecionarWhatsApp() {
+            const mensagem = "Olá! Desejo comprar um set Marretão.";
+            const numero = "556281020471"; // Substitua pelo número de telefone desejado
+            const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(mensagem)}`;
+            window.location.href = url;
+        }
     </script>
-	 <footer style="background-color: #181818; color: #fff; padding: 20px; text-align: center;">
-	    <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
-	        <a href="https://www.instagram.com/naty_kittystore/" target="_blank">
-	            <img src="assets/logo-instagram.png" alt="Instagram da Lojinha Naty Kitty Store" style="width: 30px;">
-	        </a>
-	        <a href="https://discord.com/invite/N3Xa23Qnmc" target="_blank">
-	            <img src="assets/logo-discord.png" alt="Logo Discord da Lojinha Naty Kitty Store" style="width: 30px;">
-	        </a>
-	        <a href="https://www.youtube.com/@naty_kittystore" target="_blank">
-	            <img src="assets/logo-youtube.png" alt="YouTube da Lojinha Naty Kitty Store" style="width: 30px;">
-	        </a>
-	        <a href="https://www.tiktok.com/@naty_kittystore" target="_blank">
-	            <img src="assets/logo-tiktok.png" alt="TikTok da Lojinha Naty Kitty Store" style="width: 30px;">
-	        </a>
-	    </div>
-	</footer>
+    <footer style="background-color: #181818; color: #fff; padding: 20px; text-align: center;">
+        <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+            <a href="https://www.instagram.com/naty_kittystore/" target="_blank">
+                <img src="assets/logo-instagram.png" alt="Instagram da Lojinha Naty Kitty Store" style="width: 30px;">
+            </a>
+            <a href="https://discord.com/invite/N3Xa23Qnmc" target="_blank">
+                <img src="assets/logo-discord.png" alt="Logo Discord da Lojinha Naty Kitty Store" style="width: 30px;">
+            </a>
+            <a href="https://www.youtube.com/@naty_kittystore" target="_blank">
+                <img src="assets/logo-youtube.png" alt="YouTube da Lojinha Naty Kitty Store" style="width: 30px;">
+            </a>
+            <a href="https://www.tiktok.com/@naty_kittystore" target="_blank">
+                <img src="assets/logo-tiktok.png" alt="TikTok da Lojinha Naty Kitty Store" style="width: 30px;">
+            </a>
+        </div>
+    </footer>
 </body>
 </html>
