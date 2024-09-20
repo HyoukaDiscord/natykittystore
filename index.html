@@ -10,12 +10,12 @@
     <meta name="author" content="Naty Kitty Store">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #ff69b4;
-            --text-color: #fff;
-            --bg-color: #333;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
         }
         body {
             background-color: var(--bg-color);
@@ -26,23 +26,20 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-top: 56px; /* Espaço para o navbar fixo */
         }
         h1, h2, h3, h4, h5, h6, .btn {
             font-weight: 700;
         }
-        .light-mode {
-            --primary-color: #ffc0cb;
-            --text-color: #333;
-            --bg-color: #fff;
+        .dark-mode {
+            --primary-color: #ff1493;
+            --text-color: #fff;
+            --bg-color: #333;
         }
         .logo {
             max-width: 150px;
             margin: 20px auto;
             display: block;
-        }
-        #searchResults, #orcamento {
-            max-height: 300px;
-            overflow-y: auto;
         }
         .modal-content {
             background-color: var(--bg-color);
@@ -68,15 +65,29 @@
         }
         .pagination {
             justify-content: center;
+            margin-top: 20px;
         }
         .pagination .page-link {
             font-size: 1.4em;
             padding: 0.5rem 0.9rem;
+            color: var(--primary-color);
+            background-color: var(--bg-color);
+            border-color: var(--primary-color);
+        }
+        .pagination .page-item.active .page-link {
+            color: var(--bg-color);
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: var(--bg-color);
+            border-color: #6c757d;
         }
         .product-image {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
             cursor: pointer;
         }
         .expanded-image-container {
@@ -89,7 +100,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1100;
+            z-index: 1500;
         }
         .expanded-image {
             max-width: 90%;
@@ -106,112 +117,187 @@
         .container {
             flex: 1 0 auto;
             padding-bottom: 20px;
+            min-height: 100vh;
         }
         .button-group {
             display: flex;
             gap: 10px;
         }
-        .sidebar {
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .product-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .product-price {
+            color: var(--text-color);
+            font-weight: bold;
+        }
+        .cart-summary {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+        }
+        #cartSidebar {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1200;
+            z-index: 1300;
             top: 0;
-            left: 0;
+            right: 0;
             background-color: var(--bg-color);
             overflow-x: hidden;
             transition: 0.5s;
             padding-top: 60px;
         }
-        .sidebar a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 18px;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-        }
-        .sidebar a:hover {
-            color: var(--primary-color);
-        }
-        .sidebar .closebtn {
+        #cartSidebar .closebtn {
             position: absolute;
             top: 0;
-            right: 25px;
+            left: 25px;
             font-size: 36px;
-            margin-left: 50px;
+            margin-right: 50px;
         }
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
+        #cartContent {
+            padding: 20px;
+        }
+        .modal {
+            z-index: 1400;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 1500;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        .navbar {
+            background-color: #FFC0CB; /* Rosa bebê */
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .navbar-brand img {
+            max-height: 40px;
+        }
+        footer {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1100;
+            padding: 20px 0;
+            margin-top: auto;
         }
-        .openbtn:hover {
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .social-icons a {
+            color: var(--text-color);
+            font-size: 24px;
+            transition: color 0.3s;
+        }
+        .social-icons a:hover {
+            color: var(--primary-color);
+        }
+        .navbar-toggler {
+            position: relative;
+        }
+        #mobileCartNotification {
+            position: absolute;
+            top: -10px;
+            right: -10px;
             background-color: var(--primary-color);
+            color: var(--bg-color);
+            border-radius: 50%;
+            padding: 5px;
+            font-size: 0.8em;
         }
-        .social-icon {
-            width: 35px;
-            height: 35px;
-            margin-right: 10px;
+        @media (min-width: 992px) {
+            #mobileCartNotification {
+                display: none;
+            }
         }
     </style>
 </head>
 <body class="dark-mode">
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#" id="darkModeToggle">
-            <i class="fas fa-adjust"></i>
-            <span class="ms-2">Modo Claro</span>
-        </a>
-        <a href="https://www.instagram.com/naty_kittystore/" target="_blank">
-            <img src="assets/logo-instagram.png" alt="Instagram" class="social-icon" onerror="this.src='https://via.placeholder.com/35x35?text=IG'">
-            Instagram
-        </a>
-        <a href="https://discord.com/invite/N3Xa23Qnmc" target="_blank">
-            <img src="assets/logo-discord.png" alt="Discord" class="social-icon" onerror="this.src='https://via.placeholder.com/35x35?text=DC'">
-            Discord
-        </a>
-        <a href="https://www.youtube.com/@naty_kittystore" target="_blank">
-            <img src="assets/logo-youtube.png" alt="YouTube" class="social-icon" onerror="this.src='https://via.placeholder.com/35x35?text=YT'">
-            YouTube
-        </a>
-        <a href="https://www.tiktok.com/@naty_kittystore" target="_blank">
-            <img src="assets/logo-tiktok.png" alt="TikTok" class="social-icon" onerror="this.src='https://via.placeholder.com/35x35?text=TT'">
-            TikTok
-        </a>
+    <!-- Cabeçalho (navbar) -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand mx-auto" href="#">
+                <img src="assets/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/150x40?text=Logo'">
+                <span class="ms-2">Naty Kitty Store</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span id="mobileCartNotification" class="d-lg-none">
+                    <i class="fas fa-shopping-cart"></i>
+                </span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="darkModeToggle">
+                            <i class="fas fa-adjust"></i>
+                            <span>Modo Claro</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="openCartSidebar()">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="cartItemCount" class="badge bg-danger">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="cartSidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeCartSidebar()">&times;</a>
+        <div id="cartContent"></div>
     </div>
 
-    <button class="openbtn" onclick="openNav()">&#9776;</button>
-
-    <div class="container">
-        <img src="assets/logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/200x100?text=Logo'">
-
-        <h3>Busque seu set FTF:</h3>
-        <div class="mb-3">
-            <input type="text" class="form-control" id="searchInput" placeholder="Buscar produtos...">
-            <div id="searchFeedback" class="mt-2"></div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <p class="lead">Sua loja especializada em sets Marretão FTF</p>
+            </div>
         </div>
 
-        <button id="openFilterBtn" class="btn btn-primary mb-3">Abrir Filtro</button>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mb-4">
+                    <h3>Busque seu set FTF:</h3>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar produtos...">
+                        <button id="openFilterBtn" class="btn btn-primary">Filtrar</button>
+                    </div>
+                    <div id="searchFeedback" class="mt-2"></div>
+                </div>
 
-        <div id="searchResults" class="list-group mb-3"></div>
-
-        <h3>Orçamento</h3>
-        <ul id="orcamento" class="list-group mb-3"></ul>
-
-        <p>Total: R$ <span id="total">0.00</span></p>
-
-        <div class="button-group">
-            <button id="copyOrcamento" class="btn btn-primary">Copiar Orçamento</button>
-            <button id="comprarBtn" class="btn btn-comprar" onclick="redirecionarWhatsApp()">Comprar</button>
+                <div id="searchResults" class="row"></div>
+                <nav aria-label="Navegação de página" class="mt-3">
+                    <ul class="pagination" id="pagination">
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 
@@ -233,371 +319,433 @@
                         <input type="number" class="form-control" id="maxPrice" min="0">
                     </div>
                     <button id="applyFilter" class="btn btn-primary">Buscar</button>
-                    <div id="filterResults" class="list-group mt-3"></div>
-                    <nav aria-label="Navegação de página" class="mt-3">
-                        <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" id="prevPage" aria-label="Anterior">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" id="nextPage" aria-label="Próximo">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Personalizado -->
-    <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="customModalLabel">Mensagem</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <img src="assets/asset-2.png" alt="Ícone" class="mb-3" style="max-width: 100px;">
-                    <p id="customModalMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Footer -->
+    <footer>
+                    <div class="social-icons">
+                        <a href="https://www.instagram.com/naty_kittystore/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://discord.com/invite/N3Xa23Qnmc" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="https://www.youtube.com/@naty_kittystore" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.tiktok.com/@naty_kittystore" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
-        const produtos = [
-        { nome: "1 Billion", preco: 1.49, imagem: "marretas-img/1 Billion.webp" },
-        { nome: "2ND Anniversary (Aniversário)", preco: 4.99, imagem: "marretas-img/2ND Anniversary.webp" },
-        { nome: "3RD Anniversary (Aniversário)", preco: 1.99, imagem: "marretas-img/3RD Anniversary.webp" },
-        { nome: "4RD Anniversary (Aniversário)", preco: 1.99, imagem: "marretas-img/4RD Anniversary.webp" },
-        { nome: "5TH Anniversary (Aniversário)", preco: 0.99, imagem: "marretas-img/5TH Anniversary.webp" },
-        { nome: "6TH Anniversary (Aniversário)", preco: 0.99, imagem: "marretas-img/6TH Anniversary.webp" },
-        { nome: "2019", preco: 1.49, imagem: "marretas-img/2019.webp" },
-        { nome: "2020", preco: 0.99, imagem: "marretas-img/2020.webp" },
-        { nome: "2021", preco: 0.99, imagem: "marretas-img/2021.webp" },
-        { nome: "2022", preco: 0.99, imagem: "marretas-img/2022.webp" },
-        { nome: "2023", preco: 0.99, imagem: "marretas-img/2023.webp" },
-        { nome: "2024", preco: 0.99, imagem: "marretas-img/2024.webp" },
-        { nome: "Acidic", preco: 10.50, imagem: "marretas-img/Acidic.webp" },
-        { nome: "Alchemist Hunter", preco: 4.50, imagem: "marretas-img/Alchemist Hunter.webp" },
-        { nome: "Autumn Crops", preco: 0.99, imagem: "marretas-img/Autumn Crops.webp" },
-        { nome: "Ancient Trident", preco: 3.50, imagem: "marretas-img/Ancient Trident.webp" },
-        { nome: "Ancestral Trident", preco: 3.50, imagem: "marretas-img/Ancestral Trident.webp" },
-        { nome: "Black Light Madness", preco: 0.90, imagem: "marretas-img/Black Light Madness.webp" },
-        { nome: "Bleak Ink", preco: 7.99, imagem: "marretas-img/Bleak Ink.webp" },
-        { nome: "Boneco de Neve (Snowman)", preco: 0.99, imagem: "marretas-img/Boneco de Neve.webp" },
-        { nome: "Book of Fortunes", preco: 1.00, imagem: "marretas-img/Book of Fortunes.webp" },
-        { nome: "Candy Cane Jar", preco: 2.00, imagem: "marretas-img/Candy Cane Jar.webp" },
-        { nome: "Caramel Roll", preco: 5.50, imagem: "marretas-img/Caramel Roll.webp" },
-        { nome: "Cherry Pie", preco: 7.50, imagem: "marretas-img/Cherry Pie.webp" },
-        { nome: "Celestial Witch Broom", preco: 0.85, imagem: "marretas-img/Celestial Witch Broom.webp" },
-        { nome: "Classic", preco: 7.99, imagem: "marretas-img/Classic.webp" },
-        { nome: "Cocoa Machine", preco: 3.00, imagem: "marretas-img/Cocoa Machine.webp" },
-        { nome: "Cozy Cocoa", preco: 1.49, imagem: "marretas-img/Cozy Cocoa.webp" },
-        { nome: "Casa de Gengibre (Gingerbread House)", preco: 1.00, imagem: "marretas-img/Casa de Gengibre.webp" },
-        { nome: "Cesta de Morango", preco: 15.99, imagem: "marretas-img/Cesta de Morango.webp" },
-        { nome: "Cesta de Blueberry", preco: 15.00, imagem: "marretas-img/Cesta de Blueberry.webp" },
-        { nome: "Cesta de Limão", preco: 14.50, imagem: "marretas-img/Cesta de Limão.webp" },
-        { nome: "Caixão (Coffin)", preco: 3.00, imagem: "marretas-img/Coffin.webp" },
-        { nome: "Chromatic Phoenix", preco: 1.50, imagem: "marretas-img/Chromatic Phoenix.webp" },
-        { nome: "Chapéu Sortudo (Lucky Top Hat)", preco: 3.50, imagem: "marretas-img/Lucky Top Hat.webp" },
-        { nome: "Cursed Circus Tent", preco: 0.99, imagem: "marretas-img/Cursed Circus Tent.webp" },
-        { nome: "Dave Pumpkin", preco: 1.49, imagem: "marretas-img/Dave Pumpkin.webp" },
-        { nome: "Dark Bone (Triturador de Ossos Escuros)", preco: 17.00, imagem: "marretas-img/Dark Bone.webp" },
-        { nome: "Light Bone (Triturador de Ossos Leve)", preco: 6.50, imagem: "marretas-img/Light Bone.webp" },
-        { nome: "Dark Mansion", preco: 9.50, imagem: "marretas-img/Dark Mansion.webp" },
-        { nome: "Devilish", preco: 24.50, imagem: "marretas-img/Devilish.webp" },
-        { nome: "Doomthrust", preco: 2.25, imagem: "marretas-img/Doomthrust.webp" },
-        { nome: "Eggnog Machine", preco: 1.49, imagem: "marretas-img/Eggnog Machine.webp" },
-        { nome: "Enchanted Circus Tent", preco: 0.99, imagem: "marretas-img/Enchanted Circus Tent.webp" },
-        { nome: "Festive Candelabra", preco: 6.00, imagem: "marretas-img/Festive Candelabra.webp" },
-        { nome: "Festive Pinecone", preco: 0.99, imagem: "marretas-img/Festive Pinecone.webp" },
-        { nome: "Fiery phoenix", preco: 6.00, imagem: "marretas-img/Fiery phoenix.webp" },
-        { nome: "Fish tank", preco: 2.50, imagem: "marretas-img/Fish tank.webp" },
-        { nome: "Frost Engine", preco: 3.50, imagem: "marretas-img/Frost Engine.webp" },
-        { nome: "Grandfather Clock", preco: 5.00, imagem: "marretas-img/Grandfather Clock.webp" },
-        { nome: "Haunted Circus Tent", preco: 0.99, imagem: "marretas-img/Haunted Circus Tent.webp" },
-        { nome: "Ice Sleigh", preco: 2.00, imagem: "marretas-img/Ice Sleigh.webp" },
-        { nome: "Jingle bells", preco: 1.50, imagem: "marretas-img/Jingle bells.webp" },
-        { nome: "Krampus", preco: 2.00, imagem: "marretas-img/Krampus.webp" },
-        { nome: "Lil tree", preco: 3.00, imagem: "marretas-img/Lil tree.webp" },
-        { nome: "Lunar Witch Broom", preco: 0.85, imagem: "marretas-img/Lunar Witch Broom.webp" },
-        { nome: "Lovesick", preco: 17.99, imagem: "marretas-img/Lovesick.webp" },
-        { nome: "Marching Drums", preco: 5.00, imagem: "marretas-img/Marching Drums.webp" },
-        { nome: "Marine", preco: 15.00, imagem: "marretas-img/Marine.webp" },
-        { nome: "Merry Music Box", preco: 13.50, imagem: "marretas-img/Merry Music Box.webp" },
-        { nome: "Midnight Light", preco: 4.00, imagem: "marretas-img/Midnight Light.webp" },
-        { nome: "Mothership", preco: 6.50, imagem: "marretas-img/Mothership.webp" },
-        { nome: "Mystical Trident", preco: 3.50, imagem: "marretas-img/Mystical Trident.webp" },
-        { nome: "Owl tree", preco: 1.99, imagem: "marretas-img/Owl tree.webp" },
-        { nome: "Party Ballons", preco: 41.50, imagem: "marretas-img/Party Ballons.webp" },
-        { nome: "Phantom Light", preco: 13.00, imagem: "marretas-img/Phantom Light.webp" },
-        { nome: "Pinata", preco: 12.99, imagem: "marretas-img/Pinata.webp" },
-        { nome: "Pumpkin Slice", preco: 28.00, imagem: "marretas-img/Pumpkin Slice.webp" },
-        { nome: "Quebra-Nozes Azul (Nutcracker)", preco: 2.50, imagem: "marretas-img/Quebra-Nozes Azul.webp" },
-        { nome: "Quebra-Nozes Vermelho (Nutcracker)", preco: 2.50, imagem: "marretas-img/Quebra-Nozes Vermelho.webp" },
-        { nome: "Santa Boot", preco: 4.00, imagem: "marretas-img/Santa Boot.webp" },
-        { nome: "Santa Chimney", preco: 2.00, imagem: "marretas-img/Santa Chimney.webp" },
-        { nome: "Santa Sleigh", preco: 5.50, imagem: "marretas-img/Santa Sleigh.webp" },
-        { nome: "Snow Glob", preco: 2.50, imagem: "marretas-img/Snow Glob.webp" },
-        { nome: "Solar Witch Broom", preco: 0.85, imagem: "marretas-img/Solar Witch Broom.webp" },
-        { nome: "Spooky Brew", preco: 39.00, imagem: "marretas-img/Spooky Brew.webp" },
-        { nome: "Stack of Presents", preco: 1.00, imagem: "marretas-img/Stack of Presents.webp" },
-        { nome: "Toy Box", preco: 3.50, imagem: "marretas-img/Toy Box.webp" },
-        { nome: "Toy Elf", preco: 3.00, imagem: "marretas-img/Toy Elf.webp" },
-        { nome: "Toy Santa", preco: 3.00, imagem: "marretas-img/Toy Santa.webp" },
-        { nome: "Ube Roll", preco: 6.50, imagem: "marretas-img/Ube Roll.webp" },
-        { nome: "Sweet Train", preco: 0.90, imagem: "marretas-img/Sweet Train.webp" },
-        { nome: "Festive Train", preco: 0.90, imagem: "marretas-img/Festive Train.webp" },
-        { nome: "Winter Train", preco: 0.90, imagem: "marretas-img/Winter Train.webp" },
-        { nome: "Winter Breeze", preco: 1.00, imagem: "marretas-img/Winter Breeze.webp" },
-        { nome: "Tombstone Bash", preco: 4.90, imagem: "marretas-img/Tombstone Bash.webp" },
-        { nome: "Vip Ban", preco: 0.90, imagem: "marretas-img/Vip Ban.webp" },
-        { nome: "Warlock Hunter", preco: 4.50, imagem: "marretas-img/Warlock Hunter.webp" },
-        { nome: "Witch Hunter", preco: 5.00, imagem: "marretas-img/Witch Hunter.webp" },
-        { nome: "Yuletide", preco: 9.00, imagem: "marretas-img/Yuletide.webp" }
-    ];
-
-
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-        const searchFeedback = document.getElementById('searchFeedback');
-        const orcamento = document.getElementById('orcamento');
-        const totalSpan = document.getElementById('total');
-        const copyOrcamentoBtn = document.getElementById('copyOrcamento');
-        const minPriceInput = document.getElementById('minPrice');
-        const maxPriceInput = document.getElementById('maxPrice');
-        const openFilterBtn = document.getElementById('openFilterBtn');
-        const applyFilterBtn = document.getElementById('applyFilter');
-        const filterResults = document.getElementById('filterResults');
-        const prevPageBtn = document.getElementById('prevPage');
-        const nextPageBtn = document.getElementById('nextPage');
+const produtos = [
+    { id: 1, nome: "1 Billion", preco: 1.49, imagem: "marretas-img/1 Billion.webp" },
+    { id: 2, nome: "2ND Anniversary (Aniversário)", preco: 4.99, imagem: "marretas-img/2ND Anniversary.webp" },
+    { id: 3, nome: "3RD Anniversary (Aniversário)", preco: 1.99, imagem: "marretas-img/3RD Anniversary.webp" },
+    { id: 4, nome: "4RD Anniversary (Aniversário)", preco: 1.99, imagem: "marretas-img/4RD Anniversary.webp" },
+    { id: 5, nome: "5TH Anniversary (Aniversário)", preco: 0.99, imagem: "marretas-img/5TH Anniversary.webp" },
+    { id: 6, nome: "6TH Anniversary (Aniversário)", preco: 0.99, imagem: "marretas-img/6TH Anniversary.webp" },
+    { id: 7, nome: "2019", preco: 1.49, imagem: "marretas-img/2019.webp" },
+    { id: 8, nome: "2020", preco: 0.99, imagem: "marretas-img/2020.webp" },
+    { id: 9, nome: "2021", preco: 0.99, imagem: "marretas-img/2021.webp" },
+    { id: 10, nome: "2022", preco: 0.99, imagem: "marretas-img/2022.webp" },
+    { id: 11, nome: "2023", preco: 0.99, imagem: "marretas-img/2023.webp" },
+    { id: 12, nome: "2024", preco: 0.99, imagem: "marretas-img/2024.webp" },
+    { id: 13, nome: "Acidic", preco: 10.50, imagem: "marretas-img/Acidic.webp" },
+    { id: 14, nome: "Alchemist Hunter", preco: 4.50, imagem: "marretas-img/Alchemist Hunter.webp" },
+    { id: 15, nome: "Autumn Crops", preco: 0.99, imagem: "marretas-img/Autumn Crops.webp" },
+    { id: 16, nome: "Ancient Trident", preco: 3.50, imagem: "marretas-img/Ancient Trident.webp" },
+    { id: 17, nome: "Ancestral Trident", preco: 3.50, imagem: "marretas-img/Ancestral Trident.webp" },
+    { id: 18, nome: "Black Light Madness", preco: 0.90, imagem: "marretas-img/Black Light Madness.webp" },
+    { id: 19, nome: "Bleak Ink", preco: 7.99, imagem: "marretas-img/Bleak Ink.webp" },
+    { id: 20, nome: "Boneco de Neve (Snowman)", preco: 0.99, imagem: "marretas-img/Boneco de Neve.webp" },
+    { id: 21, nome: "Book of Fortunes", preco: 1.00, imagem: "marretas-img/Book of Fortunes.webp" },
+    { id: 22, nome: "Candy Cane Jar", preco: 2.00, imagem: "marretas-img/Candy Cane Jar.webp" },
+    { id: 23, nome: "Caramel Roll", preco: 5.50, imagem: "marretas-img/Caramel Roll.webp" },
+    { id: 24, nome: "Cherry Pie", preco: 7.50, imagem: "marretas-img/Cherry Pie.webp" },
+    { id: 25, nome: "Celestial Witch Broom", preco: 0.85, imagem: "marretas-img/Celestial Witch Broom.webp" },
+    { id: 26, nome: "Classic", preco: 7.99, imagem: "marretas-img/Classic.webp" },
+    { id: 27, nome: "Cocoa Machine", preco: 3.00, imagem: "marretas-img/Cocoa Machine.webp" },
+    { id: 28, nome: "Cozy Cocoa", preco: 1.49, imagem: "marretas-img/Cozy Cocoa.webp" },
+    { id: 29, nome: "Casa de Gengibre (Gingerbread House)", preco: 1.00, imagem: "marretas-img/Casa de Gengibre.webp" },
+    { id: 30, nome: "Cesta de Morango", preco: 15.99, imagem: "marretas-img/Cesta de Morango.webp" },
+    { id: 31, nome: "Cesta de Blueberry", preco: 15.00, imagem: "marretas-img/Cesta de Blueberry.webp" },
+    { id: 32, nome: "Cesta de Limão", preco: 14.50, imagem: "marretas-img/Cesta de Limão.webp" },
+    { id: 33, nome: "Caixão (Coffin)", preco: 3.00, imagem: "marretas-img/Coffin.webp" },
+    { id: 34, nome: "Chromatic Phoenix", preco: 1.50, imagem: "marretas-img/Chromatic Phoenix.webp" },
+    { id: 35, nome: "Chapéu Sortudo (Lucky Top Hat)", preco: 3.50, imagem: "marretas-img/Lucky Top Hat.webp" },
+    { id: 36, nome: "Cursed Circus Tent", preco: 0.99, imagem: "marretas-img/Cursed Circus Tent.webp" },
+    { id: 37, nome: "Dave Pumpkin", preco: 1.49, imagem: "marretas-img/Dave Pumpkin.webp" },
+    { id: 38, nome: "Dark Bone (Triturador de Ossos Escuros)", preco: 17.00, imagem: "marretas-img/Dark Bone.webp" },
+    { id: 39, nome: "Light Bone (Triturador de Ossos Leve)", preco: 6.50, imagem: "marretas-img/Light Bone.webp" },
+    { id: 40, nome: "Dark Mansion", preco: 9.50, imagem: "marretas-img/Dark Mansion.webp" },
+    { id: 41, nome: "Devilish", preco: 24.50, imagem: "marretas-img/Devilish.webp" },
+    { id: 42, nome: "Doomthrust", preco: 2.25, imagem: "marretas-img/Doomthrust.webp" },
+    { id: 43, nome: "Eggnog Machine", preco: 1.49, imagem: "marretas-img/Eggnog Machine.webp" },
+    { id: 44, nome: "Enchanted Circus Tent", preco: 0.99, imagem: "marretas-img/Enchanted Circus Tent.webp" },
+    { id: 45, nome: "Festive Candelabra", preco: 6.00, imagem: "marretas-img/Festive Candelabra.webp" },
+    { id: 46, nome: "Festive Pinecone", preco: 0.99, imagem: "marretas-img/Festive Pinecone.webp" },
+    { id: 47, nome: "Fiery phoenix", preco: 6.00, imagem: "marretas-img/Fiery phoenix.webp" },
+    { id: 48, nome: "Fish tank", preco: 2.50, imagem: "marretas-img/Fish tank.webp" },
+    { id: 49, nome: "Frost Engine", preco: 3.50, imagem: "marretas-img/Frost Engine.webp" },
+    { id: 50, nome: "Grandfather Clock", preco: 5.00, imagem: "marretas-img/Grandfather Clock.webp" },
+    { id: 51, nome: "Haunted Circus Tent", preco: 0.99, imagem: "marretas-img/Haunted Circus Tent.webp" },
+    { id: 52, nome: "Ice Sleigh", preco: 2.00, imagem: "marretas-img/Ice Sleigh.webp" },
+    { id: 53, nome: "Jingle bells", preco: 1.50, imagem: "marretas-img/Jingle bells.webp" },
+    { id: 54, nome: "Krampus", preco: 2.00, imagem: "marretas-img/Krampus.webp" },
+    { id: 55, nome: "Lil tree", preco: 3.00, imagem: "marretas-img/Lil tree.webp" },
+    { id: 56, nome: "Lunar Witch Broom", preco: 0.85, imagem: "marretas-img/Lunar Witch Broom.webp" },
+    { id: 57, nome: "Lovesick", preco: 17.99, imagem: "marretas-img/Lovesick.webp" },
+    { id: 58, nome: "Marching Drums", preco: 5.00, imagem: "marretas-img/Marching Drums.webp" },
+    { id: 59, nome: "Marine", preco: 15.00, imagem: "marretas-img/Marine.webp" },
+    { id: 60, nome: "Merry Music Box", preco: 13.50, imagem: "marretas-img/Merry Music Box.webp" },
+    { id: 61, nome: "Midnight Light", preco: 4.00, imagem: "marretas-img/Midnight Light.webp" },
+    { id: 62, nome: "Mothership", preco: 6.50, imagem: "marretas-img/Mothership.webp" },
+    { id: 63, nome: "Mystical Trident", preco: 3.50, imagem: "marretas-img/Mystical Trident.webp" },
+    { id: 64, nome: "Owl tree", preco: 1.99, imagem: "marretas-img/Owl tree.webp" },
+    { id: 65, nome: "Party Ballons", preco: 41.50, imagem: "marretas-img/Party Ballons.webp" },
+    { id: 66, nome: "Phantom Light", preco: 13.00, imagem: "marretas-img/Phantom Light.webp" },
+    { id: 67, nome: "Pinata", preco: 12.99, imagem: "marretas-img/Pinata.webp" },
+    { id: 68, nome: "Pumpkin Slice", preco: 28.00, imagem: "marretas-img/Pumpkin Slice.webp" },
+    { id: 69, nome: "Quebra-Nozes Azul (Nutcracker)", preco: 2.50, imagem: "marretas-img/Quebra-Nozes Azul.webp" },
+    { id: 70, nome: "Quebra-Nozes Vermelho (Nutcracker)", preco: 2.50, imagem: "marretas-img/Quebra-Nozes Vermelho.webp" },
+    { id: 71, nome: "Santa Boot", preco: 4.00, imagem: "marretas-img/Santa Boot.webp" },
+    { id: 72, nome: "Santa Chimney", preco: 2.00, imagem: "marretas-img/Santa Chimney.webp" },
+    { id: 73, nome: "Santa Sleigh", preco: 5.50, imagem: "marretas-img/Santa Sleigh.webp" },
+    { id: 74, nome: "Snow Glob", preco: 2.50, imagem: "marretas-img/Snow Glob.webp" },
+    { id: 75, nome: "Solar Witch Broom", preco: 0.85, imagem: "marretas-img/Solar Witch Broom.webp" },
+    { id: 76, nome: "Spooky Brew", preco: 39.00, imagem: "marretas-img/Spooky Brew.webp" },
+    { id: 77, nome: "Stack of Presents", preco: 1.00, imagem: "marretas-img/Stack of Presents.webp" },
+    { id: 78, nome: "Toy Box", preco: 3.50, imagem: "marretas-img/Toy Box.webp" },
+    { id: 79, nome: "Toy Elf", preco: 3.00, imagem: "marretas-img/Toy Elf.webp" },
+    { id: 80, nome: "Toy Santa", preco: 3.00, imagem: "marretas-img/Toy Santa.webp" },
+    { id: 81, nome: "Ube Roll", preco: 6.50, imagem: "marretas-img/Ube Roll.webp" },
+    { id: 82, nome: "Sweet Train", preco: 0.90, imagem: "marretas-img/Sweet Train.webp" },
+    { id: 83, nome: "Festive Train", preco: 0.90, imagem: "marretas-img/Festive Train.webp" },
+    { id: 84, nome: "Winter Train", preco: 0.90, imagem: "marretas-img/Winter Train.webp" },
+    { id: 85, nome: "Winter Breeze", preco: 1.00, imagem: "marretas-img/Winter Breeze.webp" },
+    { id: 86, nome: "Tombstone Bash", preco: 4.90, imagem: "marretas-img/Tombstone Bash.webp" },
+    { id: 87, nome: "Vip Ban", preco: 0.90, imagem: "marretas-img/Vip Ban.webp" },
+    { id: 88, nome: "Warlock Hunter", preco: 4.50, imagem: "marretas-img/Warlock Hunter.webp" },
+    { id: 89, nome: "Witch Hunter", preco: 5.00, imagem: "marretas-img/Witch Hunter.webp" },
+    { id: 90, nome: "Yuletide", preco: 9.00, imagem: "marretas-img/Yuletide.webp" }
+];
 
         let orcamentoItems = [];
-        let currentPage = 1;
-        const itemsPerPage = 6;
-        let filteredProducts = [];
-
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
         const filterModal = new bootstrap.Modal(document.getElementById('filterModal'));
+        const openFilterBtn = document.getElementById('openFilterBtn');
+        const applyFilterBtn = document.getElementById('applyFilter');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const cartContent = document.getElementById('cartContent');
+        const cartItemCount = document.getElementById('cartItemCount');
+        const pagination = document.getElementById('pagination');
 
-        function addToOrcamento(produto) {
-            const existingItem = orcamentoItems.find(item => item.produto.nome === produto.nome);
-            if (existingItem) {
-                existingItem.quantidade++;
-            } else {
-                orcamentoItems.push({ produto, quantidade: 1 });
-            }
-            updateOrcamentoDisplay();
-            updateTotal();
+        let currentPage = 1;
+        const itemsPerPage = 12; // 4 colunas x 3 linhas
+        let filteredProducts = produtos;
+
+        function displayProducts(products, container, page = 1) {
+            container.innerHTML = '';
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const productsToDisplay = products.slice(startIndex, endIndex);
+
+            productsToDisplay.forEach(produto => {
+                const col = document.createElement('div');
+                col.className = 'col-12 col-sm-6 col-md-4 col-lg-3 mb-4';
+                col.innerHTML = `
+                    <div class="product-card">
+                        <img src="${produto.imagem}" alt="${produto.nome}" class="product-image img-fluid mb-2" onerror="this.src='https://via.placeholder.com/200x200?text=Produto'">
+                        <h5>${produto.nome}</h5>
+                        <p class="product-price">R$ ${produto.preco.toFixed(2)}</p>
+                        <button class="btn btn-comprar btn-sm add-item" data-id="${produto.id}">
+                            <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                        </button>
+                    </div>
+                `;
+                col.querySelector('.add-item').addEventListener('click', (e) => addToOrcamento(e.target.dataset.id));
+                col.querySelector('.product-image').addEventListener('click', () => expandImage(produto.imagem));
+                container.appendChild(col);
+            });
+
+            updatePagination(products.length, page);
         }
 
-        function updateOrcamentoDisplay() {
-            orcamento.innerHTML = '';
-            orcamentoItems.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.innerHTML = `
-                    ${item.quantidade}x ${item.produto.nome} - R$ ${(item.produto.preco * item.quantidade).toFixed(2)}
-                    <button class="btn btn-danger btn-sm remove-item">
-                        <i class="fas fa-trash-alt"></i> Remover
-                    </button>
-                `;
-                li.querySelector('.remove-item').addEventListener('click', () => {
-                    if (item.quantidade > 1) {
-                        item.quantidade--;
-                    } else {
-                        orcamentoItems = orcamentoItems.filter(i => i !== item);
-                    }
-                    updateOrcamentoDisplay();
-                    updateTotal();
+        function updatePagination(totalItems, currentPage) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            pagination.innerHTML = '';
+
+            // Botão "Anterior"
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>`;
+            pagination.appendChild(prevLi);
+
+            // Páginas
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const li = document.createElement('li');
+                    li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                    li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+                    pagination.appendChild(li);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const li = document.createElement('li');
+                    li.className = 'page-item disabled';
+                    li.innerHTML = '<span class="page-link">...</span>';
+                    pagination.appendChild(li);
+                }
+            }
+
+            // Botão "Próximo"
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>`;
+            pagination.appendChild(nextLi);
+        }
+
+        pagination.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (e.target.tagName === 'A' && !e.target.parentElement.classList.contains('disabled')) {
+                const page = parseInt(e.target.dataset.page);
+                currentPage = page;
+                displayProducts(filteredProducts, searchResults, page);
+            }
+        });
+
+        function updateCartDisplay() {
+            cartContent.innerHTML = '';
+            let total = 0;
+
+            if (orcamentoItems.length === 0) {
+                cartContent.innerHTML = '<p>Seu carrinho está vazio.</p>';
+            } else {
+                const ul = document.createElement('ul');
+                ul.className = 'list-group';
+                orcamentoItems.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    li.innerHTML = `
+                        <div>
+                            <span class="fw-bold">${item.quantidade}x</span> ${item.produto.nome}
+                            <br>
+                            <small class="text-muted">R$ ${(item.produto.preco * item.quantidade).toFixed(2)}</small>
+                        </div>
+                        <button class="btn btn-danger btn-sm remove-item" data-id="${item.produto.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    `;
+                    ul.appendChild(li);
+                    total += item.produto.preco * item.quantidade;
                 });
-                orcamento.appendChild(li);
+                cartContent.appendChild(ul);
+
+                const totalElement = document.createElement('p');
+                totalElement.className = 'mt-3 fw-bold';
+                totalElement.textContent = `Total: R$ ${total.toFixed(2)}`;
+                cartContent.appendChild(totalElement);
+
+                const buttonGroup = document.createElement('div');
+                buttonGroup.className = 'd-grid gap-2 mt-3';
+                buttonGroup.innerHTML = `
+                    <button id="copyOrcamento" class="btn btn-primary">Copiar Orçamento</button>
+                    <button id="comprarBtn" class="btn btn-comprar" onclick="redirecionarWhatsApp()">Finalizar Compra</button>
+                `;
+                cartContent.appendChild(buttonGroup);
+
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', (e) => removeFromOrcamento(e.target.closest('.remove-item').dataset.id));
+                });
+
+                document.getElementById('copyOrcamento').addEventListener('click', copyOrcamento);
+            }
+
+            updateCartItemCount();
+        }
+
+        function updateCartItemCount() {
+            const itemCount = orcamentoItems.reduce((sum, item) => sum + item.quantidade, 0);
+            cartItemCount.textContent = itemCount;
+            const mobileCartNotification = document.getElementById('mobileCartNotification');
+            mobileCartNotification.style.display = itemCount > 0 ? 'block' : 'none';
+            
+            // Salvar carrinho no localStorage
+            localStorage.setItem('carrinho', JSON.stringify(orcamentoItems));
+        }
+
+        function toggleMobileCartNotification() {
+            const mobileCartNotification = document.getElementById('mobileCartNotification');
+            const navbarCollapse = document.getElementById('navbarNav');
+            if (navbarCollapse.classList.contains('show')) {
+                mobileCartNotification.style.display = 'none';
+            } else {
+                updateCartItemCount(); // Isso vai mostrar a notificação se houver itens no carrinho
+            }
+        }
+
+        // Carregar carrinho do localStorage ao iniciar a página
+        function loadCarrinhoFromCache() {
+            const cachedCarrinho = localStorage.getItem('carrinho');
+            if (cachedCarrinho) {
+                orcamentoItems = JSON.parse(cachedCarrinho);
+                updateCartDisplay();
+                updateCartItemCount();
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        function addToOrcamento(productId) {
+            const produto = produtos.find(p => p.id === parseInt(productId));
+            if (produto) {
+                const existingItem = orcamentoItems.find(item => item.produto.id === produto.id);
+                if (existingItem) {
+                    existingItem.quantidade++;
+                } else {
+                    orcamentoItems.push({ produto, quantidade: 1 });
+                }
+                updateCartDisplay();
+                showToast('Produto adicionado ao carrinho');
+            }
+        }
+
+        function removeFromOrcamento(productId) {
+            const index = orcamentoItems.findIndex(item => item.produto.id === parseInt(productId));
+            if (index !== -1) {
+                if (orcamentoItems[index].quantidade > 1) {
+                    orcamentoItems[index].quantidade--;
+                } else {
+                    orcamentoItems.splice(index, 1);
+                }
+                updateCartDisplay();
+            }
+        }
+
+        function copyOrcamento() {
+            let orcamentoText = "Orçamento:\n\n";
+            orcamentoItems.forEach(item => {
+                orcamentoText += `${item.quantidade}x ${item.produto.nome} - R$ ${(item.produto.preco * item.quantidade).toFixed(2)}\n`;
+            });
+            const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
+            orcamentoText += `\nTotal: R$ ${total.toFixed(2)}`;
+
+            navigator.clipboard.writeText(orcamentoText).then(() => {
+                showToast('Orçamento copiado para a área de transferência!');
             });
         }
 
-        function updateTotal() {
-            const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
-            totalSpan.textContent = total.toFixed(2);
-        }
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            filteredProducts = produtos.filter(produto =>
+                produto.nome.toLowerCase().includes(searchTerm)
+            );
+            currentPage = 1;
+            displayProducts(filteredProducts, searchResults);
+        });
 
-        function searchProducts() {
-            const searchTerm = searchInput.value.toLowerCase().replace(/\s+/g, '');
-            searchResults.innerHTML = '';
-            searchFeedback.innerHTML = '';
+        openFilterBtn.addEventListener('click', () => {
+            filterModal.show();
+        });
 
-            if (searchTerm.length === 0) {
-                return;
-            }
+        applyFilterBtn.addEventListener('click', () => {
+            const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
 
-            if (searchTerm.length < 3) {
-                searchFeedback.innerHTML = 'Procurando...';
-                return;
-            }
-
-            const filteredProducts = produtos.filter(produto => 
-                produto.nome.toLowerCase().replace(/\s+/g, '').includes(searchTerm)
+            filteredProducts = produtos.filter(produto =>
+                produto.preco >= minPrice && produto.preco <= maxPrice
             );
 
-            if (filteredProducts.length === 0) {
-                searchFeedback.innerHTML = 'Set não encontrado, confira o nome digitado';
-            } else {
-                displayProducts(filteredProducts, searchResults);
-            }
-        }
-
-        function displayProducts(products, container) {
-            container.innerHTML = '';
-            products.forEach(produto => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.innerHTML = `
-                    <div>
-                        <img src="${produto.imagem}" alt="${produto.nome}" class="product-image me-2" onerror="this.src='https://via.placeholder.com/50x50?text=Produto'">
-                        ${produto.nome} - R$ ${produto.preco.toFixed(2)}
-                    </div>
-                    <button class="btn btn-success btn-sm add-item">
-                        <i class="fas fa-plus"></i> Adicionar
-                    </button>
-                `;
-                li.querySelector('.add-item').addEventListener('click', () => addToOrcamento(produto));
-                li.querySelector('.product-image').addEventListener('click', () => expandImage(produto.imagem));
-                container.appendChild(li);
-            });
-        }
+            currentPage = 1;
+            displayProducts(filteredProducts, searchResults);
+            filterModal.hide();
+        });
 
         function expandImage(imageSrc) {
-            // Remover qualquer container de imagem expandida existente
             const existingContainer = document.querySelector('.expanded-image-container');
             if (existingContainer) {
-                document.body.removeChild(existingContainer);
+                existingContainer.remove();
             }
 
             const expandedImageContainer = document.createElement('div');
             expandedImageContainer.className = 'expanded-image-container';
             expandedImageContainer.innerHTML = `
-                <img src="${imageSrc}" alt="Imagem expandida" class="expanded-image" onerror="this.src='https://via.placeholder.com/300x300?text=Imagem+não+encontrada'">
+                <img src="${imageSrc}" alt="Imagem expandida" class="expanded-image">
                 <span class="close-expanded-image">&times;</span>
             `;
             document.body.appendChild(expandedImageContainer);
 
-            function closeExpandedImage() {
-                document.body.removeChild(expandedImageContainer);
-            }
-
-            expandedImageContainer.querySelector('.close-expanded-image').addEventListener('click', closeExpandedImage);
             expandedImageContainer.addEventListener('click', (e) => {
-                if (e.target === expandedImageContainer) {
-                    closeExpandedImage();
+                if (e.target === expandedImageContainer || e.target.classList.contains('close-expanded-image')) {
+                    document.body.removeChild(expandedImageContainer);
                 }
             });
         }
 
-        function applyFilter() {
-            const minPrice = parseFloat(minPriceInput.value) || 0;
-            const maxPrice = parseFloat(maxPriceInput.value) || Infinity;
-
-            filteredProducts = produtos.filter(produto => 
-                produto.preco >= minPrice && produto.preco <= maxPrice
-            );
-
-            currentPage = 1;
-            displayFilteredProducts();
-        }
-
-        function displayFilteredProducts() {
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageProducts = filteredProducts.slice(startIndex, endIndex);
-
-            displayProducts(pageProducts, filterResults);
-
-            prevPageBtn.parentElement.classList.toggle('disabled', currentPage === 1);
-            nextPageBtn.parentElement.classList.toggle('disabled', endIndex >= filteredProducts.length);
-        }
-
-        function showCustomAlert(message) {
-            const modal = new bootstrap.Modal(document.getElementById('customModal'));
-            document.getElementById('customModalMessage').textContent = message;
-            modal.show();
-        }
-
         function redirecionarWhatsApp() {
-            const mensagem = "Olá! Desejo comprar um set Marretão.";
-            const numero = "556281020471"; // Substitua pelo número de telefone desejado
-            const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(mensagem)}`;
-            window.open(url, '_blank');
-        }
-
-        function openNav() {
-            document.getElementById("mySidebar").style.width = "250px";
-        }
-
-        function closeNav() {
-            document.getElementById("mySidebar").style.width = "0";
-        }
-
-        function setDarkMode(isDark) {
-            document.body.classList.toggle('dark-mode', isDark);
-            document.body.classList.toggle('light-mode', !isDark);
-            localStorage.setItem('darkMode', isDark);
-            document.getElementById('darkModeToggle').querySelector('span').textContent = isDark ? 'Modo Claro' : 'Modo Escuro';
-        }
-
-        searchInput.addEventListener('input', searchProducts);
-
-        copyOrcamentoBtn.addEventListener('click', () => {
-            const orcamentoText = orcamentoItems.map(item => `${item.quantidade}x ${item.produto.nome} - R$ ${(item.produto.preco * item.quantidade).toFixed(2)}`).join('\n');
-            const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
-            const fullText = `${orcamentoText}\n\nTotal: R$ ${total.toFixed(2)}`;
-            
-            navigator.clipboard.writeText(fullText).then(() => {
-                showCustomAlert('Orçamento copiado para a área de transferência!');
+            let mensagem = "Olá! Gostaria de fazer o seguinte pedido:\n\n";
+            orcamentoItems.forEach(item => {
+                mensagem += `${item.quantidade}x ${item.produto.nome} - R$ ${(item.produto.preco * item.quantidade).toFixed(2)}\n`;
             });
-        });
+            const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
+            mensagem += `\nTotal: R$ ${total.toFixed(2)}`;
 
-        document.getElementById('darkModeToggle').addEventListener('click', (e) => {
-            e.preventDefault();
-            const isDark = document.body.classList.contains('dark-mode');
-            setDarkMode(!isDark);
-        });
-
-        // Carregar preferência de modo escuro
-        const savedDarkMode = localStorage.getItem('darkMode');
-        if (savedDarkMode !== null) {
-            setDarkMode(savedDarkMode === 'true');
-        } else {
-            setDarkMode(true);
+            const numeroWhatsApp = "5511999999999";
+            const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+            window.open(urlWhatsApp, '_blank');
         }
 
-        openFilterBtn.addEventListener('click', () => filterModal.show());
-        applyFilterBtn.addEventListener('click', applyFilter);
-
-        prevPageBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage > 1) {
-                currentPage--;
-                displayFilteredProducts();
-            }
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            darkModeToggle.querySelector('span').textContent = isDarkMode ? 'Modo Claro' : 'Modo Escuro';
+            localStorage.setItem('darkMode', isDarkMode);
         });
 
-        nextPageBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                displayFilteredProducts();
-            }
+        const savedDarkMode = localStorage.getItem('darkMode');
+        if (savedDarkMode === 'true') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.querySelector('span').textContent = 'Modo Claro';
+        } else {
+            document.body.classList.remove('dark-mode');
+            darkModeToggle.querySelector('span').textContent = 'Modo Escuro';
+        }
+
+        function openCartSidebar() {
+            document.getElementById("cartSidebar").style.width = "300px";
+        }
+
+        function closeCartSidebar() {
+            document.getElementById("cartSidebar").style.width = "0";
+        }
+
+        // Adicionar event listener para o toggle do navbar
+        document.querySelector('.navbar-toggler').addEventListener('click', toggleMobileCartNotification);
+
+        // Chamar a função de carregamento do carrinho ao iniciar a página
+        window.addEventListener('load', loadCarrinhoFromCache);
+
+        // Exibir produtos assim que a página carregar
+        window.addEventListener('load', () => {
+            displayProducts(produtos, searchResults);
         });
+
+        // Inicializar o carrinho
+        updateCartDisplay();
     </script>
 </body>
 </html>
