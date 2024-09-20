@@ -11,11 +11,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #ff69b4;
-            --text-color: #333;
+            --text-color: #444;
             --bg-color: #f8f9fa;
+            --header-bg-color: #FFC0CB; /* Cor do header no modo claro */
         }
         body {
             background-color: var(--bg-color);
@@ -34,7 +36,8 @@
         .dark-mode {
             --primary-color: #ff1493;
             --text-color: #fff;
-            --bg-color: #333;
+            --bg-color: #444444;
+            --header-bg-color: #fb8ac5; /* Cor do header no modo escuro */
         }
         .logo {
             max-width: 150px;
@@ -187,12 +190,16 @@
             opacity: 1;
         }
         .navbar {
-            background-color: #FFC0CB; /* Rosa bebê */
+            background-color: var(--header-bg-color);
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adicione esta linha para o sombreado */
         }
         .navbar-brand {
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             font-weight: 700;
+            color: var(--text-color);
+            transition: color 0.3s;
         }
         .navbar-brand img {
             max-height: 40px;
@@ -234,9 +241,23 @@
                 display: none;
             }
         }
+        .store-title {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+        .cart-icon.has-items,
+        .cart-count.has-items {
+            color: #000; /* Cor verde */
+            transition: color 0.3s ease;
+        }
     </style>
 </head>
-<body class="dark-mode">
+<body>
     <!-- Cabeçalho (navbar) -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container-fluid">
@@ -260,8 +281,8 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="openCartSidebar()">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span id="cartItemCount" class="badge bg-danger">0</span>
+                            <i class="fas fa-shopping-cart cart-icon"></i>
+                            <span id="cartItemCount" class="badge bg-danger cart-count">0</span>
                         </a>
                     </li>
                 </ul>
@@ -277,7 +298,7 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-12 text-center mb-4">
-                <p class="lead">Sua loja especializada em sets Marretão FTF</p>
+                <h1 class="store-title">Loja Flee the Facility</h1>
             </div>
         </div>
 
@@ -287,7 +308,7 @@
                     <h3>Busque seu set FTF:</h3>
                     <div class="input-group">
                         <input type="text" class="form-control" id="searchInput" placeholder="Buscar produtos...">
-                        <button id="openFilterBtn" class="btn btn-primary">Filtrar</button>
+                        <button id="openFilterBtn" class="btn btn-primary">Filtro</button>
                     </div>
                     <div id="searchFeedback" class="mt-2"></div>
                 </div>
@@ -570,6 +591,17 @@ const produtos = [
             
             // Salvar carrinho no localStorage
             localStorage.setItem('carrinho', JSON.stringify(orcamentoItems));
+
+            // Adicione ou remova a classe 'has-items' dependendo se há itens no carrinho
+            const cartIcon = document.querySelector('.cart-icon');
+            const cartCount = document.querySelector('.cart-count');
+            if (itemCount > 0) {
+                cartCount.classList.add('has-items');
+                cartIcon.classList.add('has-items');
+            } else {
+                cartCount.classList.remove('has-items');
+                cartIcon.classList.remove('has-items');
+            }
         }
 
         function toggleMobileCartNotification() {
@@ -714,15 +746,35 @@ const produtos = [
             const isDarkMode = document.body.classList.contains('dark-mode');
             darkModeToggle.querySelector('span').textContent = isDarkMode ? 'Modo Claro' : 'Modo Escuro';
             localStorage.setItem('darkMode', isDarkMode);
+            updateNavbarBrandColor(isDarkMode);
         });
 
-        const savedDarkMode = localStorage.getItem('darkMode');
-        if (savedDarkMode === 'true') {
-            document.body.classList.add('dark-mode');
-            darkModeToggle.querySelector('span').textContent = 'Modo Claro';
-        } else {
-            document.body.classList.remove('dark-mode');
-            darkModeToggle.querySelector('span').textContent = 'Modo Escuro';
+        function setInitialTheme() {
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode === null) {
+                // Se não houver tema salvo, use o tema claro como padrão
+                document.body.classList.remove('dark-mode');
+                darkModeToggle.querySelector('span').textContent = 'Modo Escuro';
+                updateNavbarBrandColor(false);
+            } else {
+                // Se houver um tema salvo, use-o
+                const isDarkMode = savedDarkMode === 'true';
+                document.body.classList.toggle('dark-mode', isDarkMode);
+                darkModeToggle.querySelector('span').textContent = isDarkMode ? 'Modo Claro' : 'Modo Escuro';
+                updateNavbarBrandColor(isDarkMode);
+            }
+        }
+
+        // Chame esta função ao carregar a página
+        window.addEventListener('load', () => {
+            setInitialTheme();
+            loadCarrinhoFromCache();
+            displayProducts(produtos, searchResults);
+        });
+
+        function updateNavbarBrandColor(isDarkMode) {
+            const navbarBrand = document.querySelector('.navbar-brand');
+            navbarBrand.style.color = isDarkMode ? 'var(--text-color)' : 'var(--text-color)';
         }
 
         function openCartSidebar() {
@@ -735,14 +787,6 @@ const produtos = [
 
         // Adicionar event listener para o toggle do navbar
         document.querySelector('.navbar-toggler').addEventListener('click', toggleMobileCartNotification);
-
-        // Chamar a função de carregamento do carrinho ao iniciar a página
-        window.addEventListener('load', loadCarrinhoFromCache);
-
-        // Exibir produtos assim que a página carregar
-        window.addEventListener('load', () => {
-            displayProducts(produtos, searchResults);
-        });
 
         // Inicializar o carrinho
         updateCartDisplay();
