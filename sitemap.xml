@@ -20,14 +20,38 @@
     </url>
     <url>
         <loc>http://natykitty.store/</loc>
-        <lastmod>2024-09-20</lastmod>
+        <lastmod>2024-09-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://natykitty.store/#</loc>
-        <lastmod>2024-09-20</lastmod>
+        <lastmod>2024-09-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>http://natykitty.store/index.html</loc>
+        <lastmod>2024-09-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>2.0</priority>
+    </url>
+    <url>
+        <loc>http://natykitty.store/index.html#</loc>
+        <lastmod>2024-09-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>2.0</priority>
+    </url>
+    <url>
+        <loc>http://www.natykitty.store/index.html</loc>
+        <lastmod>2024-09-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>2.0</priority>
+    </url>
+    <url>
+        <loc>http://www.natykitty.store/index.html#</loc>
+        <lastmod>2024-09-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>2.0</priority>
     </url>
 </urlset>
