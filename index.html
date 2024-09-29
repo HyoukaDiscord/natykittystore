@@ -640,7 +640,8 @@ const produtos = [
 
             productsToDisplay.forEach(produto => {
                 const col = document.createElement('div');
-                col.className = 'col-12 col-sm-6 col-md-4 col-lg-3 mb-4';
+                col.className = 'col-6 col-sm-6 col-md-4 col-lg-3 mb-4'; // Alterado para col-6 Quantidade de itens por tela
+               // col.className = 'col-12 col-sm-6 col-md-4 col-lg-3 mb-4'; 
                 col.innerHTML = `
                     <div class="product-card">
                         <div class="image-container">
