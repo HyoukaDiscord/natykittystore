@@ -982,6 +982,7 @@
 
         function redirecionarWhatsApp() {
             let mensagem = "Olá! Gostaria de fazer o seguinte pedido:\n\n";
+            var instagramUrl = "https://www.instagram.com/direct/t/naty_kittystore";
             orcamentoItems.forEach(item => {
                 mensagem += `${item.quantidade}x ${item.produto.nome} - R$ ${(item.produto.preco * item.quantidade).toFixed(2)}\n`;
             });
