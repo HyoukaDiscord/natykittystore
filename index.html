@@ -393,102 +393,9 @@
             text-align: center;
             border-radius: 8px;
         }
-        .overlayy {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 999;
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            max-width: 90%;
-            width: 400px;
-        }
-
-        .popup-content {
-            text-align: center;
-        }
-
-        .popup-content p {
-            font-size: 1.2em;
-            color: #333;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .popup-content strong {
-            color: #e74c3c;
-            font-size: 1.3em;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            cursor: pointer;
-            font-size: 24px;
-            color: #999;
-            transition: color 0.3s;
-        }
-
-        .close-btn:hover {
-            color: #333;
-        }
-
-        .instagram-btn {
-            display: inline-block;
-            background-color: #e1306c;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .instagram-btn:hover {
-            background-color: #c13584;
-        }
     </style>
 </head>
 <body>
-    <div id="overlayy" class="overlayy"></div>
-    <div id="popup" class="popup">
-        <div class="popup-content">
-            <span class="close-btn" onclick="closePopup()">&times;</span>
-            <p><strong>Atenção!</strong> Estamos sem WhatsApp no momento.</p>
-            <p>Após copiar o orçamento me envie no Instagram!</p>
-            <a href="https://ig.me/m/naty_kittystore" class="instagram-btn" target="_blank">Comprar no Instagram</a>
-        </div>
-    </div>
-
-    <script>
-        function showPopup() {
-            document.getElementById("overlayy").style.display = "block";
-            document.getElementById("popup").style.display = "block";
-        }
-
-        function closePopup() {
-            document.getElementById("overlayy").style.display = "none";
-            document.getElementById("popup").style.display = "none";
-        }
-
-        // Exibir o popup assim que a página for carregada
-        window.onload = showPopup;
-    </script>
     <div class="stars"></div>
 
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
@@ -1073,23 +980,17 @@
         }
 
 
-       function redirecionarWhatsApp() {
+        function redirecionarWhatsApp() {
             let mensagem = "Olá! Gostaria de fazer o seguinte pedido:\n\n";
-            var instagramUrl = "https://www.instagram.com/direct/t/naty_kittystore";
             orcamentoItems.forEach(item => {
                 mensagem += `${item.quantidade}x ${item.produto.nome} - R$ ${(item.produto.preco * item.quantidade).toFixed(2)}\n`;
             });
             const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
             mensagem += `\nTotal: R$ ${total.toFixed(2)}`;
 
-            const numeroWhatsApp = "5562981020471";
-         //   const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-          //  window.open(urlWhatsApp, '_blank');
-              // Adicione os parâmetros da mensagem, se necessário
-    instagramUrl += "?text=" + encodeURIComponent(mensagem);
-
-// Abra o link do Instagram em uma nova aba
-window.open("https://ig.me/m/naty_kittystore", '_blank');
+            const numeroWhatsApp = "5562999074353"; //substituir o numero para o zap
+            const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+            window.open(urlWhatsApp, '_blank');
         }
 
         darkModeToggle.addEventListener('click', () => {
