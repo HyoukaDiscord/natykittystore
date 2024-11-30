@@ -644,7 +644,16 @@
         
         
         
-        
+
+
+        // Função para calcular a soma dos preços
+        function calcularSomaPrecos() {
+            const soma = produtos.reduce((total, produto) => total + produto.preco, 0);
+            console.log("A soma total dos preços é:", soma.toFixed(2));
+        }
+
+        // Executa a função ao carregar o site
+        calcularSomaPrecos();
         
         
         
