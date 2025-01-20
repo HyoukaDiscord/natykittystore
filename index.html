@@ -569,7 +569,7 @@
     { id: 70, nome: "Mothership", preco: 5.00, imagem: "marretas/Mothership.webp", emEstoque: true },
     { id: 77, nome: "Acidic", preco: 9.99, imagem: "marretas/Acidic.webp", emEstoque: true },
     { id: 62, nome: "Grandfather Clock", preco: 6.99, imagem: "marretas/Grandfather Clock.webp", emEstoque: true },
-    { id: 79, nome: "Phantom Light", preco: 11.99, imagem: "marretas/Phantom Light.webp", emEstoque: true },
+    { id: 79, nome: "Phantom Light", preco: 11.99, imagem: "marretas/Phantom Light.webp", emEstoque: false },
     { id: 78, nome: "Pinata", preco: 12.99, imagem: "marretas/Pinata.webp", emEstoque: true },
     { id: 106, nome: "Magical Portal", preco: 8.99, imagem: "marretas/Magical Portal.webp", emEstoque: true },
     { id: 80, nome: "Merry Music Box", preco: 12.50, imagem: "marretas/Merry Music Box.webp", emEstoque: true },
@@ -667,14 +667,28 @@
         
 
 
-        // Função para calcular a soma dos preços
-        function calcularSomaPrecos() {
-            const soma = produtos.reduce((total, produto) => total + produto.preco, 0);
-            console.log("A soma total dos preços é:", soma.toFixed(2));
-        }
+// Função para calcular as somas dos preços
+function calcularSomaPrecos() {
+    const totais = produtos.reduce(
+        (acumulador, produto) => {
+            acumulador.total += produto.preco;
+            if (produto.emEstoque) {
+                acumulador.emEstoque += produto.preco;
+            } else {
+                acumulador.vendido += produto.preco;
+            }
+            return acumulador;
+        },
+        { total: 0, emEstoque: 0, vendido: 0 } // Valores iniciais para o acumulador
+    );
 
-        // Executa a função ao carregar o site
-        calcularSomaPrecos();
+    console.log("A soma total dos preços é:", totais.total.toFixed(2));
+    console.log("A soma dos preços dos produtos em estoque é:", totais.emEstoque.toFixed(2));
+    console.log("A soma dos preços dos produtos vendidos é:", totais.vendido.toFixed(2));
+}
+
+// Executa a função ao carregar o site
+calcularSomaPrecos();
         
         
         
