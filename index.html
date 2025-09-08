@@ -546,15 +546,15 @@
  const produtos = [
     { id: 109, nome: "Pegasus Blade", preco: 12.99, imagem: "marretaswebp/Pegasus Blade.webp", emEstoque: true },
     { id: 57, nome: "Santa Boot", preco: 1.00, imagem: "marretaswebp/Santa Boot.webp", emEstoque: true },
-    { id: 4, nome: "Black Light Madness", preco: 0.69, imagem: "marretaswebp/Black Light Madness.webp", emEstoque: true },
+    { id: 4, nome: "Black Light Madness", preco: 0.69, imagem: "marretaswebp/Black Light Madness.webp", emEstoque: false },
     { id: 39, nome: "Santa Chimney", preco: 0.70, imagem: "marretaswebp/Santa Chimney.webp", emEstoque: true },
     { id: 12, nome: "2021", preco: 0.65, imagem: "marretaswebp/2021.webp", emEstoque: true },
     { id: 13, nome: "2022", preco: 0.65, imagem: "marretaswebp/2022.webp", emEstoque: true },
     { id: 14, nome: "2023", preco: 0.65, imagem: "marretaswebp/2023.webp", emEstoque: true },
     { id: 15, nome: "2024", preco: 0.65, imagem: "marretaswebp/2024.webp", emEstoque: true },
     { id: 120, nome: "2025", preco: 0.60, imagem: "marretaswebp/2025.webp", emEstoque: true },
-    { id: 24, nome: "Stack of Presents", preco: 0.75, imagem: "marretaswebp/Stack of Presents.webp", emEstoque: true },
-    { id: 154, nome: "8TH Anniversary (Aniversário)", preco: 0.90, imagem: "marretaswebp/8TH Anniversary.webp", emEstoque: true },
+    { id: 24, nome: "Stack of Presents", preco: 0.75, imagem: "marretaswebp/Stack of Presents.webp", emEstoque: false },
+    { id: 154, nome: "8TH Anniversary (Aniversário)", preco: 0.90, imagem: "marretaswebp/8TH Anniversary.webp", emEstoque: false },
     { id: 122, nome: "Elf Box", preco: 0.70, imagem: "marretaswebp/Elf Box.webp", emEstoque: true },
     { id: 116, nome: "Autumn Scarecrow", preco: 5.49, imagem: "marretaswebp/Autumn Scarecrow.webp", emEstoque: true },
     { id: 76, nome: "Dark Mansion", preco: 6.99, imagem: "marretaswebp/Dark Mansion.webp", emEstoque: true },
@@ -592,7 +592,7 @@
     { id: 92, nome: "7th Aniversário", preco: 0.70, imagem: "marretaswebp/7th Aniversário.webp", emEstoque: true },
     { id: 58, nome: "Alchemist Hunter", preco: 4.50, imagem: "marretaswebp/Alchemist Hunter.webp", emEstoque: true },
     { id: 59, nome: "Warlock Hunter", preco: 4.50, imagem: "marretaswebp/Warlock Hunter.webp", emEstoque: true },
-    { id: 138, nome: "Leprechaun Boot", preco: 0.60, imagem: "marretaswebp/Leprechaun Boot.webp", emEstoque: true },
+    { id: 138, nome: "Leprechaun Boot", preco: 0.60, imagem: "marretaswebp/Leprechaun Boot.webp", emEstoque: false },
     { id: 45, nome: "Caixão (Coffin)", preco: 3.50, imagem: "marretaswebp/Coffin.webp", emEstoque: true },
     { id: 68, nome: "Fiery phoenix", preco: 2.99, imagem: "marretaswebp/Fiery phoenix.webp", emEstoque: true },
     { id: 64, nome: "Witch Hunter", preco: 4.99, imagem: "marretaswebp/Witch Hunter.webp", emEstoque: true },
@@ -602,8 +602,8 @@
     { id: 29, nome: "Dave Pumpkin", preco: 0.40, imagem: "marretaswebp/Dave Pumpkin.webp", emEstoque: true },
     { id: 23, nome: "Casa de Gengibre (Gingerbread House)", preco: 0.75, imagem: "marretaswebp/Casa de Gengibre.webp", emEstoque: true },
     { id: 25, nome: "Winter Breeze", preco: 0.80, imagem: "marretaswebp/Winter Breeze.webp", emEstoque: true },
-    { id: 19, nome: "Enchanted Circus Tent", preco: 0.79, imagem: "marretaswebp/Enchanted Circus Tent.webp", emEstoque: true },
-    { id: 18, nome: "Cursed Circus Tent", preco: 0.79, imagem: "marretaswebp/Cursed Circus Tent.webp", emEstoque: true },
+    { id: 19, nome: "Enchanted Circus Tent", preco: 0.79, imagem: "marretaswebp/Enchanted Circus Tent.webp", emEstoque: false },
+    { id: 18, nome: "Cursed Circus Tent", preco: 0.79, imagem: "marretaswebp/Cursed Circus Tent.webp", emEstoque: false },
     { id: 129, nome: "Santa Box", preco: 0.70, imagem: "marretaswebp/Santa Box.webp", emEstoque: true },
     { id: 10, nome: "6TH Anniversary (Aniversário)", preco: 0.85, imagem: "marretaswebp/6TH Anniversary.webp", emEstoque: true },
     { id: 34, nome: "4TH Anniversary (Aniversário)", preco: 0.85, imagem: "marretaswebp/4RD Anniversary.webp", emEstoque: true },
@@ -702,7 +702,7 @@
 
 
 
-
+produtos.sort((a, b) => b.emEstoque - a.emEstoque);
 
 
 
@@ -1166,6 +1166,7 @@ calcularSomaPrecos();
     </script>
 </body>
 </html>
+
 
 
 
