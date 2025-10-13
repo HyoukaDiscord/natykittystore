@@ -546,7 +546,7 @@
 const produtos = [
     { id: 90, nome: "Party Ballons", preco: 35.99, imagem: "marretaswebp/Party Ballons.webp", emEstoque: false },
     { id: 88, nome: "Pumpkin Slice", preco: 26.99, imagem: "marretaswebp/Pumpkin Slice.webp", emEstoque: false },
-    { id: 86, nome: "Lovesick", preco: 22.99, imagem: "marretaswebp/Lovesick.webp", emEstoque: true },
+    { id: 86, nome: "Lovesick", preco: 22.99, imagem: "marretaswebp/Lovesick.webp", emEstoque: false },
     { id: 89, nome: "Spooky Brew", preco: 20.99, imagem: "marretaswebp/Spooky Brew.webp", emEstoque: false },
     { id: 87, nome: "Devilish", preco: 19.99, imagem: "marretaswebp/Devilish.webp", emEstoque: false },
     { id: 94, nome: "Ghotic Bouquet", preco: 15.99, imagem: "marretaswebp/Cemetery_Remnansts.webp", emEstoque: false },
@@ -593,8 +593,8 @@ const produtos = [
     { id: 128, nome: "Jollyday Batter", preco: 3.00, imagem: "marretaswebp/Jollyday Batter.webp", emEstoque: true },
     { id: 151, nome: "Jade Viper", preco: 2.99, imagem: "marretaswebp/Jade Viper.webp", emEstoque: true },
     { id: 68, nome: "Fiery phoenix", preco: 2.99, imagem: "marretaswebp/Fiery phoenix.webp", emEstoque: false },
-    { id: 51, nome: "Ancestral Trident", preco: 2.75, imagem: "marretaswebp/Ancestral Trident.webp", emEstoque: true },
-    { id: 50, nome: "Ancient Trident", preco: 2.75, imagem: "marretaswebp/Ancient Trident.webp", emEstoque: true },
+    { id: 51, nome: "Ancestral Trident", preco: 2.75, imagem: "marretaswebp/Ancestral Trident.webp", emEstoque: false },
+    { id: 50, nome: "Ancient Trident", preco: 2.75, imagem: "marretaswebp/Ancient Trident.webp", emEstoque: false },
     { id: 54, nome: "Mystical Trident", preco: 2.75, imagem: "marretaswebp/Mystical Trident.webp", emEstoque: true },
     { id: 63, nome: "Marching Drums", preco: 2.49, imagem: "marretaswebp/Marching Drums.webp", emEstoque: true },
     { id: 106, nome: "Magical Portal", preco: 2.49, imagem: "marretaswebp/Magical Portal.webp", emEstoque: true },
@@ -614,7 +614,7 @@ const produtos = [
     { id: 107, nome: "Moon staff", preco: 1.19, imagem: "marretaswebp/Moonstone.webp", emEstoque: false },
     { id: 55, nome: "Toy Box", preco: 1.00, imagem: "marretaswebp/Toy Box.webp", emEstoque: true },
     { id: 57, nome: "Santa Boot", preco: 1.00, imagem: "marretaswebp/Santa Boot.webp", emEstoque: true },
-    { id: 35, nome: "Owl tree", preco: 1.00, imagem: "marretaswebp/Owl tree.webp", emEstoque: true },
+    { id: 35, nome: "Owl tree", preco: 1.00, imagem: "marretaswebp/Owl tree.webp", emEstoque: false },
     { id: 47, nome: "Lil tree", preco: 1.00, imagem: "marretaswebp/Lil tree.webp", emEstoque: false },
     { id: 22, nome: "Book of Fortunes", preco: 1.00, imagem: "marretaswebp/Book of Fortunes.webp", emEstoque: false },
     { id: 31, nome: "Chromatic Phoenix", preco: 1.00, imagem: "marretaswebp/Chromatic Phoenix.webp", emEstoque: false },
@@ -652,10 +652,10 @@ const produtos = [
     { id: 20, nome: "Festive Pinecone", preco: 0.79, imagem: "marretaswebp/Festive Pinecone.webp", emEstoque: true },
     { id: 43, nome: "Quebra-Nozes Vermelho (Nutcracker)", preco: 0.79, imagem: "marretaswebp/Quebra-Nozes Vermelho.webp", emEstoque: true },
     { id: 3, nome: "Solar Witch Broom", preco: 0.79, imagem: "marretaswebp/Solar Witch Broom.webp", emEstoque: true },
-    { id: 21, nome: "Haunted Circus Tent", preco: 0.79, imagem: "marretaswebp/Haunted Circus Tent.webp", emEstoque: true },
+    { id: 21, nome: "Haunted Circus Tent", preco: 0.79, imagem: "marretaswebp/Haunted Circus Tent.webp", emEstoque: false },
     { id: 42, nome: "Quebra-Nozes Azul (Nutcracker)", preco: 0.79, imagem: "marretaswebp/Quebra-Nozes Azul.webp", emEstoque: true },
-    { id: 19, nome: "Enchanted Circus Tent", preco: 0.79, imagem: "marretaswebp/Enchanted Circus Tent.webp", emEstoque: true },
-    { id: 18, nome: "Cursed Circus Tent", preco: 0.79, imagem: "marretaswebp/Cursed Circus Tent.webp", emEstoque: true },
+    { id: 19, nome: "Enchanted Circus Tent", preco: 0.79, imagem: "marretaswebp/Enchanted Circus Tent.webp", emEstoque: false },
+    { id: 18, nome: "Cursed Circus Tent", preco: 0.79, imagem: "marretaswebp/Cursed Circus Tent.webp", emEstoque: false },
     { id: 37, nome: "Ice Sleigh", preco: 0.75, imagem: "marretaswebp/Ice Sleigh.webp", emEstoque: false },
     { id: 24, nome: "Stack of Presents", preco: 0.75, imagem: "marretaswebp/Stack of Presents.webp", emEstoque: false },
     { id: 23, nome: "Casa de Gengibre (Gingerbread House)", preco: 0.75, imagem: "marretaswebp/Casa de Gengibre.webp", emEstoque: false },
@@ -1165,6 +1165,7 @@ calcularSomaPrecos();
     </script>
 </body>
 </html>
+
 
 
 
