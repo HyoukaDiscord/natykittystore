@@ -339,16 +339,16 @@
             text-align: center;
             border-radius: 8px;
         }
-        /* Novos Estilos para o Dropdown de Usuário */
+        /* Estilos para o Dropdown Rosa */
+        .btn-pink-user {
+            background-color: var(--primary-color) !important;
+            border: none !important;
+            color: white !important;
+        }
         .dropdown-menu {
             border-radius: 12px;
             border: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            background-color: var(--bg-color);
-        }
-        .dropdown-item:hover {
-            background-color: var(--primary-color);
-            color: white !important;
         }
     </style>
 </head>
@@ -381,20 +381,8 @@
                         </a>
                     </li>
                     
-                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0" id="auth-item">
-                        <a href="login.html" id="btn-login" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                            Entrar
-                        </a>
-                        <div id="user-menu" class="d-none dropdown">
-                            <button class="btn btn-primary btn-sm rounded-pill px-3 dropdown-toggle text-white" type="button" data-bs-toggle="dropdown">
-                                Minha Conta
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="perfil.html">📦 Meus Pedidos</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><button class="dropdown-item text-danger" id="btn-logout">Sair</button></li>
-                            </ul>
-                        </div>
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0" id="auth-section">
+                        <a href="login.html" id="btn-login" class="btn btn-outline-primary btn-sm rounded-pill px-3">Entrar</a>
                     </li>
                 </ul>
             </div>
@@ -437,28 +425,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="filterModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Filtrar Produtos</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Preço Mínimo:</label>
-                        <input type="number" class="form-control" id="minPrice">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Preço Máximo:</label>
-                        <input type="number" class="form-control" id="maxPrice">
-                    </div>
-                    <button id="applyFilter" class="btn btn-primary w-100">Aplicar Filtro</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <footer>
         <div class="social-icons">
             <a href="https://www.instagram.com/naty_kittystore/" target="_blank"><i class="fab fa-instagram"></i></a>
@@ -477,7 +443,7 @@
         const SUPABASE_KEY = 'sb_publishable_QB1TByO6iiBUEjhxzhuvUQ_G5T-2o1R';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let produtos = []; // Será preenchido pelo Supabase
+        let produtos = [];
         let orcamentoItems = [];
         let filteredProducts = [];
         let currentPage = 1;
@@ -488,27 +454,38 @@
         const cartItemCount = document.getElementById('cartItemCount');
         const pagination = document.getElementById('pagination');
 
-        // --- FUNÇÕES DE AUTENTICAÇÃO ---
+        // --- FUNÇÃO DE AUTENTICAÇÃO (MENU INTELIGENTE) ---
         async function checkUser() {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            const btnLogin = document.getElementById('btn-login');
-            const userMenu = document.getElementById('user-menu');
+            const authSection = document.getElementById('auth-section');
 
             if (user) {
-                btnLogin.classList.add('d-none');
-                userMenu.classList.remove('d-none');
+                // Usuário Logado: Mostra o Menu Dropdown Rosa
+                authSection.innerHTML = `
+                    <div class="dropdown">
+                        <button class="btn btn-pink-user btn-sm rounded-pill px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i> Minha Conta
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li><a class="dropdown-item" href="perfil.html"><i class="fas fa-box me-2"></i> Meus Pedidos</a></li>
+                            <li><a class="dropdown-item" href="perfil.html"><i class="fas fa-user-edit me-2"></i> Meus Dados</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><button class="dropdown-item text-danger" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i> Sair</button></li>
+                        </ul>
+                    </div>
+                `;
             } else {
-                btnLogin.classList.remove('d-none');
-                userMenu.classList.add('d-none');
+                // Usuário Deslogado: Mostra o Botão Entrar
+                authSection.innerHTML = `<a href="login.html" class="btn btn-outline-primary btn-sm rounded-pill px-3">Entrar</a>`;
             }
         }
 
-        document.getElementById('btn-logout')?.addEventListener('click', async () => {
+        async function logout() {
             await supabaseClient.auth.signOut();
             window.location.reload();
-        });
+        }
 
-        // --- FUNÇÕES DE PRODUTOS (SUPABASE) ---
+        // --- FUNÇÕES DE PRODUTOS ---
         async function fetchProdutos() {
             const { data, error } = await supabaseClient
                 .from('produtos')
@@ -520,7 +497,6 @@
                 return;
             }
 
-            // Traduzindo os nomes das colunas do Supabase para o formato que seu site usa
             produtos = data.map(item => ({
                 id: item.id,
                 nome: item.nome,
@@ -568,23 +544,7 @@
             updatePagination(products.length, page);
         }
 
-        // --- LÓGICA DE CARRINHO E INTERFACE ---
-        function updatePagination(totalItems, currentPage) {
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            pagination.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
-                const li = document.createElement('li');
-                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-                pagination.appendChild(li);
-            }
-        }
-
-        window.changePage = (page) => {
-            currentPage = page;
-            displayProducts(filteredProducts, searchResults, page);
-        };
-
+        // --- LÓGICA DE CARRINHO ---
         function addToOrcamento(productId) {
             const produto = produtos.find(p => p.id === productId);
             if (produto) {
@@ -597,6 +557,7 @@
         }
 
         function updateCartDisplay() {
+            const cartContent = document.getElementById('cartContent');
             cartContent.innerHTML = '';
             let total = 0;
             if (orcamentoItems.length === 0) {
@@ -633,95 +594,56 @@
             localStorage.setItem('carrinho', JSON.stringify(orcamentoItems));
         }
 
-async function redirecionarWhatsApp() {
-    // 1. Verifica se o usuário está logado
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    
-    if (!user) {
-        alert("Por favor, faça login para finalizar sua compra!");
-        window.location.href = 'login.html';
-        return;
-    }
-
-    // 2. Calcula o total
-    const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
-
-    // 3. Salva o pedido no Supabase
-    const { data: pedido, error } = await supabaseClient
-        .from('pedidos')
-        .insert([
-            { 
-                user_id: user.id, 
-                valor_total: total, 
-                status: 'pago' // Como você já recebe o Pix, o status inicial pode ser pago ou pendente
+        async function redirecionarWhatsApp() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                alert("Por favor, faça login para finalizar sua compra!");
+                window.location.href = 'login.html';
+                return;
             }
-        ])
-        .select();
 
-    if (error) {
-        console.error('Erro ao registrar pedido:', error);
-        alert("Houve um erro ao processar seu pedido. Tente novamente.");
-        return;
-    }
+            const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
 
-    // 4. Prepara a mensagem para o WhatsApp
-    let mensagem = `Olá Naty! Acabei de fazer um pedido no site (ID: #${pedido[0].id.slice(0,8)}):\n\n`;
-    orcamentoItems.forEach(item => {
-        mensagem += `✅ ${item.quantidade}x ${item.produto.nome}\n`;
-    });
-    mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
-    mensagem += `\n📧 Meu e-mail: ${user.email}`;
+            // Registro no Supabase
+            const { data: pedido, error } = await supabaseClient
+                .from('pedidos')
+                .insert([{ user_id: user.id, valor_total: total, status: 'pago' }])
+                .select();
 
-    // 5. Abre o WhatsApp e limpa o carrinho
-    const numeroWhatsApp = "5562999074353";
-    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-    
-    localStorage.removeItem('carrinho'); // Limpa para a próxima compra
-    window.open(urlWhatsApp, '_blank');
-}
+            if (error) {
+                alert("Erro ao registrar pedido.");
+                return;
+            }
 
-        // --- BUSCA E FILTROS ---
+            let mensagem = `Olá Naty! Pedido #${pedido[0].id.slice(0,8)}:\n\n`;
+            orcamentoItems.forEach(item => { mensagem += `✅ ${item.quantidade}x ${item.produto.nome}\n`; });
+            mensagem += `\n💰 Total: R$ ${total.toFixed(2)}\n📧 E-mail: ${user.email}`;
+
+            localStorage.removeItem('carrinho');
+            window.open(`https://wa.me/5562999074353?text=${encodeURIComponent(mensagem)}`, '_blank');
+        }
+
+        // --- BUSCA E INICIALIZAÇÃO ---
         searchInput.addEventListener('input', () => {
             const term = searchInput.value.toLowerCase();
             filteredProducts = produtos.filter(p => p.nome.toLowerCase().includes(term));
             displayProducts(filteredProducts, searchResults, 1);
         });
 
-        // --- INICIALIZAÇÃO ---
         window.addEventListener('load', () => {
             checkUser();
             fetchProdutos();
-            
-            // Recuperar carrinho
             const saved = localStorage.getItem('carrinho');
-            if (saved) {
-                orcamentoItems = JSON.parse(saved);
-                updateCartDisplay();
-            }
-
-            // Modo Escuro
-            const dark = localStorage.getItem('darkMode') === 'true';
-            if (dark) document.body.classList.add('dark-mode');
-        });
-
-        // Dark Mode Toggle
-        document.getElementById('darkModeToggle').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            if (saved) { orcamentoItems = JSON.parse(saved); updateCartDisplay(); }
         });
 
         function openCartSidebar() { document.getElementById("cartSidebar").style.width = "300px"; }
         function closeCartSidebar() { document.getElementById("cartSidebar").style.width = "0"; }
-        
         function showToast(m) {
             const t = document.createElement('div');
-            t.className = 'toast show';
-            t.textContent = m;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 3000);
+            t.className = 'toast show'; t.textContent = m;
+            document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
         }
-
         function expandImage(s) {
             const div = document.createElement('div');
             div.className = 'expanded-image-container';
@@ -732,4 +654,3 @@ async function redirecionarWhatsApp() {
     </script>
 </body>
 </html>
-
