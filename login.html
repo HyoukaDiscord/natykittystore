@@ -88,7 +88,7 @@
         const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: 'https://natykittystore-l3xgv7b3x-carlos-projects-5eb6ccc5.vercel.app/perfil.html'
+                redirectTo: window.location.origin + '/perfil.html'
             }
         });
         if (error) alert("Erro ao conectar com Google: " + error.message);
