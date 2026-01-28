@@ -574,7 +574,7 @@
                     total += item.produto.preco * item.quantidade;
                 });
                 cartContent.innerHTML += `<p class="mt-3 fw-bold text-end">Total: R$ ${total.toFixed(2)}</p>
-                <button class="btn btn-comprar w-100 mt-2" onclick="redirecionarWhatsApp()">Finalizar Compra</button>`;
+                <button class="btn btn-comprar w-100 mt-2" onclick="finalizarCompra()">Finalizar Compra</button>`;
             }
             updateCartItemCount();
         }
@@ -594,53 +594,48 @@
             localStorage.setItem('carrinho', JSON.stringify(orcamentoItems));
         }
 
-           async function redirecionarWhatsApp() {
-        // 1. Pega o usuário logado no momento
-        const { data: { user } } = await supabaseClient.auth.getUser();
+        async function finalizarCompra() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) { alert("Faça login com o Google primeiro!"); return; }
         
-        if (!user) {
-            alert("Por favor, faça login para finalizar sua compra!");
-            window.location.href = 'login.html';
-            return;
-        }
-    
-        // 2. Calcula o total (garantindo que o valor seja salvo no banco)
-        const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
-    
-        // 3. SALVA O PEDIDO NO BANCO (Isso faz o pedido aparecer no Perfil do cliente)
-        const { data: pedido, error } = await supabaseClient
-            .from('pedidos')
-            .insert([
-                { 
-                    user_id: user.id, 
-                    valor_total: total, 
-                    status: 'pago' 
+            const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
+        
+            // 1. Salva o pedido no banco de dados
+            const { data: pedido, error: errPedido } = await supabaseClient
+                .from('pedidos')
+                .insert([{ user_id: user.id, valor_total: total, status: 'pendente' }]).select();
+        
+            if (errPedido) { alert("Erro ao criar pedido no banco."); return; }
+        
+            // 2. Chama a Edge Function para gerar o PIX
+            try {
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        pedidoId: pedido[0].id,
+                        itens: orcamentoItems.map(i => ({
+                            title: i.produto.nome,
+                            unit_price: i.produto.preco,
+                            quantity: i.quantidade,
+                            currency_id: 'BRL'
+                        }))
+                    })
+                });
+        
+                const data = await response.json();
+                
+                // 3. Redireciona para o Mercado Pago (Tela do PIX)
+                if (data.url) {
+                    localStorage.removeItem('carrinho');
+                    window.location.href = data.url;
+                } else {
+                    alert("Erro ao gerar link de pagamento.");
                 }
-            ])
-            .select();
-    
-        if (error) {
-            console.error('Erro ao registrar pedido:', error);
-            alert("Houve um erro ao processar seu pedido no banco de dados.");
-            return;
+            } catch (err) {
+                alert("Erro na conexão com o sistema de pagamentos.");
+            }
         }
-    
-        // 4. Prepara a mensagem para a Naty no WhatsApp
-        let mensagem = `Olá Naty! Pedido registrado no site (ID: #${pedido[0].id.slice(0,8)}):\n\n`;
-        orcamentoItems.forEach(item => {
-            mensagem += `✅ ${item.quantidade}x ${item.produto.nome}\n`;
-        });
-        mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
-        mensagem += `\n📧 E-mail do cliente: ${user.email}`;
-    
-        // 5. Limpa o carrinho e abre o WhatsApp
-        localStorage.removeItem('carrinho');
-        window.open(`https://wa.me/5562999074353?text=${encodeURIComponent(mensagem)}`, '_blank');
-        
-        // Opcional: Avisa o usuário e recarrega para limpar a tela
-        alert("Pedido registrado! Enviando para o WhatsApp...");
-        window.location.reload();
-    }
 
         // --- BUSCA E INICIALIZAÇÃO ---
         searchInput.addEventListener('input', () => {
@@ -673,4 +668,5 @@
     </script>
 </body>
 </html>
+
 
