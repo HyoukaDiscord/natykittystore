@@ -633,13 +633,52 @@
             localStorage.setItem('carrinho', JSON.stringify(orcamentoItems));
         }
 
-        function redirecionarWhatsApp() {
-            let msg = "Olá Naty! Fiz um pedido no site:\n\n";
-            orcamentoItems.forEach(i => msg += `${i.quantidade}x ${i.produto.nome}\n`);
-            const total = orcamentoItems.reduce((s, i) => s + i.produto.preco * i.quantidade, 0);
-            msg += `\nTotal: R$ ${total.toFixed(2)}`;
-            window.open(`https://wa.me/5562999074353?text=${encodeURIComponent(msg)}`, '_blank');
-        }
+async function redirecionarWhatsApp() {
+    // 1. Verifica se o usuário está logado
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    
+    if (!user) {
+        alert("Por favor, faça login para finalizar sua compra!");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // 2. Calcula o total
+    const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
+
+    // 3. Salva o pedido no Supabase
+    const { data: pedido, error } = await supabaseClient
+        .from('pedidos')
+        .insert([
+            { 
+                user_id: user.id, 
+                valor_total: total, 
+                status: 'pago' // Como você já recebe o Pix, o status inicial pode ser pago ou pendente
+            }
+        ])
+        .select();
+
+    if (error) {
+        console.error('Erro ao registrar pedido:', error);
+        alert("Houve um erro ao processar seu pedido. Tente novamente.");
+        return;
+    }
+
+    // 4. Prepara a mensagem para o WhatsApp
+    let mensagem = `Olá Naty! Acabei de fazer um pedido no site (ID: #${pedido[0].id.slice(0,8)}):\n\n`;
+    orcamentoItems.forEach(item => {
+        mensagem += `✅ ${item.quantidade}x ${item.produto.nome}\n`;
+    });
+    mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
+    mensagem += `\n📧 Meu e-mail: ${user.email}`;
+
+    // 5. Abre o WhatsApp e limpa o carrinho
+    const numeroWhatsApp = "5562999074353";
+    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+    
+    localStorage.removeItem('carrinho'); // Limpa para a próxima compra
+    window.open(urlWhatsApp, '_blank');
+}
 
         // --- BUSCA E FILTROS ---
         searchInput.addEventListener('input', () => {
@@ -693,3 +732,4 @@
     </script>
 </body>
 </html>
+
