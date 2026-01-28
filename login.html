@@ -2,146 +2,88 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/webp" href="assets/logo.webp">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - NatyKittyStore</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { background-color: #fce4ec; } 
+        :root { --primary-pink: #ff69b4; --bg-pink-light: #fce4ec; }
+        body { background-color: var(--bg-pink-light); font-family: 'Poppins', sans-serif; }
         
         .auth-card {
             border: none;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 105, 180, 0.15);
             background: white;
-            overflow: hidden;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
         }
 
-        .nav-pills .nav-link.active {
-            background-color: #ff69b4 !important;
-        }
-
-        .nav-link { color: #ff69b4; }
-
-        .btn-auth {
-            background-color: #ff69b4;
-            color: white;
-            border-radius: 10px;
-            border: none;
-            padding: 12px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn-auth:hover {
-            background-color: #ff1493;
-            transform: translateY(-2px);
-        }
+        .logo-img { max-height: 80px; margin-bottom: 20px; }
 
         .btn-google {
             background-color: white;
             color: #444;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 10px;
-            font-weight: 500;
+            border: 2px solid #f1f1f1;
+            border-radius: 15px;
+            padding: 12px;
+            font-weight: 600;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 20px;
         }
 
         .btn-google:hover {
             background-color: #f8f9fa;
-            border-color: #bbb;
+            border-color: var(--primary-pink);
+            transform: translateY(-2px);
         }
 
-        .form-control { border-radius: 10px; }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            color: #bbb;
-            margin: 20px 0;
-        }
-
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #eee;
-        }
-
-        .divider:not(:empty)::before { margin-right: .5em; }
-        .divider:not(:empty)::after { margin-left: .5em; }
+        .info-text { font-size: 0.85rem; color: #888; margin-top: 25px; line-height: 1.5; }
+        .back-link { color: var(--primary-pink); text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
-<body>
+<body class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
 
-<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-    <div class="auth-card p-4 w-100" style="max-width: 450px;">
-        <div class="text-center mb-4">
-            <h2 style="color: #ff69b4; font-weight: bold;">NatyKittyStore 🐾</h2>
-            <p class="text-muted">Faça login para gerenciar seus pedidos</p>
-        </div>
+<div class="auth-card">
+    <a href="index.html">
+        <img src="assets/logo.webp" alt="NatyKittyStore Logo" class="logo-img">
+    </a>
+    <h3 style="color: var(--primary-pink); font-weight: 700;">Bem-vinda(o)!</h3>
+    <p class="text-muted small">Acesse sua conta para gerenciar seus pedidos e salvar seu Nick do Roblox.</p>
 
-        <button onclick="loginComGoogle()" class="btn btn-google w-100 d-flex align-items-center justify-content-center mb-2">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" class="me-2">
-            Entrar com Google
-        </button>
+    <button onclick="loginComGoogle()" class="btn btn-google">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+        Entrar com Google
+    </button>
 
-        <div class="divider">ou use seu e-mail</div>
+    <p class="info-text">
+        <i class="fas fa-shield-alt me-1" style="color: #4caf50;"></i> 
+        Login seguro via Google. Não armazenamos sua senha.
+    </p>
 
-        <ul class="nav nav-pills mb-4 nav-justified" id="pills-tab" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active" id="tab-login" data-bs-toggle="pill" data-bs-target="#login" type="button">Entrar</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="tab-cadastro" data-bs-toggle="pill" data-bs-target="#cadastro" type="button">Cadastrar</button>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="login">
-                <form id="form-login">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">E-mail</label>
-                        <input type="email" id="login-email" class="form-control" placeholder="seu@email.com" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Senha</label>
-                        <input type="password" id="login-senha" class="form-control" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="btn btn-auth w-100 mt-2">Acessar Loja</button>
-                </form>
-            </div>
-
-            <div class="tab-pane fade" id="cadastro">
-                <form id="form-cadastro">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">E-mail</label>
-                        <input type="email" id="cadastro-email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Senha</label>
-                        <input type="password" id="cadastro-senha" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-auth w-100 mt-2">Criar Conta Grátis</button>
-                </form>
-            </div>
-        </div>
-        
-        <div class="text-center mt-4">
-            <a href="index.html" class="text-decoration-none small text-muted">← Voltar para a vitrine</a>
-        </div>
+    <div class="mt-4">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left me-1"></i> Voltar para a vitrine
+        </a>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // CONFIGURAÇÃO SUPABASE
+    // Substitua pelas suas chaves reais
     const SUPABASE_URL = 'https://dlljnstkibbkppcwqips.supabase.co'; 
     const SUPABASE_KEY = 'sb_publishable_QB1TByO6iiBUEjhxzhuvUQ_G5T-2o1R'; 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // FUNÇÃO LOGIN GOOGLE
     async function loginComGoogle() {
         const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
@@ -151,28 +93,6 @@
         });
         if (error) alert("Erro ao conectar com Google: " + error.message);
     }
-
-    // LÓGICA E-MAIL/SENHA (OPCIONAL)
-    document.getElementById('form-login')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-senha').value;
-
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) alert("Erro: " + error.message);
-        else window.location.href = 'perfil.html';
-    });
-
-    document.getElementById('form-cadastro')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('cadastro-email').value;
-        const password = document.getElementById('cadastro-senha').value;
-
-        const { error } = await supabaseClient.auth.signUp({ email, password });
-        if (error) alert("Erro: " + error.message);
-        else alert("Verifique seu e-mail para confirmar o cadastro!");
-    });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
