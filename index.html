@@ -594,34 +594,53 @@
             localStorage.setItem('carrinho', JSON.stringify(orcamentoItems));
         }
 
-        async function redirecionarWhatsApp() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                alert("Por favor, faça login para finalizar sua compra!");
-                window.location.href = 'login.html';
-                return;
-            }
-
-            const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
-
-            // Registro no Supabase
-            const { data: pedido, error } = await supabaseClient
-                .from('pedidos')
-                .insert([{ user_id: user.id, valor_total: total, status: 'pago' }])
-                .select();
-
-            if (error) {
-                alert("Erro ao registrar pedido.");
-                return;
-            }
-
-            let mensagem = `Olá Naty! Pedido #${pedido[0].id.slice(0,8)}:\n\n`;
-            orcamentoItems.forEach(item => { mensagem += `✅ ${item.quantidade}x ${item.produto.nome}\n`; });
-            mensagem += `\n💰 Total: R$ ${total.toFixed(2)}\n📧 E-mail: ${user.email}`;
-
-            localStorage.removeItem('carrinho');
-            window.open(`https://wa.me/5562999074353?text=${encodeURIComponent(mensagem)}`, '_blank');
+           async function redirecionarWhatsApp() {
+        // 1. Pega o usuário logado no momento
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        
+        if (!user) {
+            alert("Por favor, faça login para finalizar sua compra!");
+            window.location.href = 'login.html';
+            return;
         }
+    
+        // 2. Calcula o total (garantindo que o valor seja salvo no banco)
+        const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
+    
+        // 3. SALVA O PEDIDO NO BANCO (Isso faz o pedido aparecer no Perfil do cliente)
+        const { data: pedido, error } = await supabaseClient
+            .from('pedidos')
+            .insert([
+                { 
+                    user_id: user.id, 
+                    valor_total: total, 
+                    status: 'pago' 
+                }
+            ])
+            .select();
+    
+        if (error) {
+            console.error('Erro ao registrar pedido:', error);
+            alert("Houve um erro ao processar seu pedido no banco de dados.");
+            return;
+        }
+    
+        // 4. Prepara a mensagem para a Naty no WhatsApp
+        let mensagem = `Olá Naty! Pedido registrado no site (ID: #${pedido[0].id.slice(0,8)}):\n\n`;
+        orcamentoItems.forEach(item => {
+            mensagem += `✅ ${item.quantidade}x ${item.produto.nome}\n`;
+        });
+        mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
+        mensagem += `\n📧 E-mail do cliente: ${user.email}`;
+    
+        // 5. Limpa o carrinho e abre o WhatsApp
+        localStorage.removeItem('carrinho');
+        window.open(`https://wa.me/5562999074353?text=${encodeURIComponent(mensagem)}`, '_blank');
+        
+        // Opcional: Avisa o usuário e recarrega para limpar a tela
+        alert("Pedido registrado! Enviando para o WhatsApp...");
+        window.location.reload();
+    }
 
         // --- BUSCA E INICIALIZAÇÃO ---
         searchInput.addEventListener('input', () => {
@@ -654,3 +673,4 @@
     </script>
 </body>
 </html>
+
