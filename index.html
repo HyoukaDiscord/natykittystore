@@ -609,19 +609,23 @@
         
             // 2. Chama a Edge Function para gerar o PIX
             try {
-                const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        pedidoId: pedido[0].id,
-                        itens: orcamentoItems.map(i => ({
-                            title: i.produto.nome,
-                            unit_price: i.produto.preco,
-                            quantity: i.quantidade,
-                            currency_id: 'BRL'
-                        }))
-                    })
-                });
+            const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${SUPABASE_KEY}`, // Adicione esta linha
+                    'apikey': SUPABASE_KEY // E esta linha também
+                },
+                body: JSON.stringify({
+                    pedidoId: pedido[0].id,
+                    itens: orcamentoItems.map(i => ({
+                        title: i.produto.nome,
+                        unit_price: i.produto.preco,
+                        quantity: i.quantidade,
+                        currency_id: 'BRL'
+                    }))
+                })
+            });
         
                 const data = await response.json();
                 
@@ -668,5 +672,6 @@
     </script>
 </body>
 </html>
+
 
 
