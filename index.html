@@ -420,8 +420,7 @@
 
                 if (errPedido) throw errPedido;
 
-                // 2. Chama a Edge Function com Headers de Segurança
-                // ATENÇÃO: Aqui estava o erro. Os itens devem estar DENTRO do body, e o JSON.stringify deve abraçar tudo.
+                // 2. Chama a Edge Function com Headers de Segurança e JSON formatado corretamente
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
                     method: 'POST',
                     headers: { 
