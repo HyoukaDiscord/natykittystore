@@ -408,86 +408,78 @@
         };
 
         // --- FUNÇÃO CORRIGIDA DO MERCADO PAGO ---
-                   async function finalizarCompra() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    
-    // 1. Verificações Iniciais
-    if (!user) { 
-        alert("Faça login primeiro!"); 
-        window.location.href = "login.html"; 
-        return; 
-    }
-    
-    if (orcamentoItems.length === 0) {
-        alert("Seu carrinho está vazio!");
-        return;
-    }
-
-    const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
-
-    try {
-        // 2. Criar o Pedido no Banco de Dados
-        // Salvamos o produto_id do primeiro item para a lógica de devolução automática
-        const { data: pedido, error: errPedido } = await supabaseClient
-            .from('pedidos')
-            .insert([{ 
-                user_id: user.id, 
-                valor_total: total, 
-                status: 'pendente',
-                produto_id: orcamentoItems[0].produto.id 
-            }])
-            .select();
-
-        if (errPedido) throw errPedido;
-
-        // 3. Reservar Estoque (RPC)
-        // Tentamos diminuir o estoque. Se falhar (ex: outro comprou no mesmo segundo), paramos aqui.
-        console.log("Reservando estoque...");
-        const { error: errRPC } = await supabaseClient.rpc('decrementar_estoque', { 
-            row_id: orcamentoItems[0].produto.id 
-        });
-
-        if (errRPC) {
-            console.error("Erro ao reservar:", errRPC);
-            alert("Desculpe, este item acabou de esgotar!");
-            return; 
-        }
-
-        // 4. Chamar a Edge Function para o Mercado Pago
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            },
-            body: JSON.stringify({
-                pedidoId: pedido[0].id,
-                itens: orcamentoItems.map(i => ({
-                    title: i.produto.nome,
-                    unit_price: Number(i.produto.preco),
-                    quantity: Number(i.quantidade),
-                    currency_id: 'BRL'
-                }))
-            })
-        });
-
-        if (!response.ok) throw new Error("Erro ao processar pagamento no servidor.");
-
-        const data = await response.json();
+          async function finalizarCompra() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            // 1. Verificações Básicas
+            if (!user) { 
+                alert("Faça login primeiro!"); 
+                window.location.href = "login.html"; 
+                return; 
+            }
+            
+            if (orcamentoItems.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
         
-        if (data.url) {
-            localStorage.removeItem('carrinho');
-            window.location.href = data.url;
-        } else {
-            alert("Erro ao gerar link de pagamento.");
+            const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
+        
+            try {
+                // 2. Cria o pedido apenas como 'pendente'
+                // Importante: Passamos o produto_id para que a Edge Function saiba o que reservar depois
+                const { data: pedido, error: errPedido } = await supabaseClient
+                    .from('pedidos')
+                    .insert([{ 
+                        user_id: user.id, 
+                        valor_total: total, 
+                        status: 'pendente',
+                        produto_id: orcamentoItems[0].produto.id 
+                    }])
+                    .select();
+        
+                if (errPedido) throw errPedido;
+        
+                // 3. Chama a Edge Function
+                // Ela agora é quem vai mudar o status para 'reservado' e baixar o estoque
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify({
+                        pedidoId: pedido[0].id,
+                        itens: orcamentoItems.map(i => ({
+                            title: i.produto.nome,
+                            unit_price: Number(i.produto.preco),
+                            quantity: Number(i.quantidade),
+                            currency_id: 'BRL'
+                        }))
+                    })
+                });
+        
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || "Erro ao processar pagamento.");
+                }
+        
+                const data = await response.json();
+                
+                if (data.url) {
+                    // Sucesso: O estoque já foi decrementado pela Edge Function neste ponto
+                    localStorage.removeItem('carrinho');
+                    window.location.href = data.url;
+                } else {
+                    alert("Erro ao gerar link de pagamento.");
+                }
+        
+            } catch (err) {
+                console.error("Erro:", err);
+                alert("Erro ao processar compra: " + err.message);
+            }
         }
-
-    } catch (err) {
-        console.error("Erro geral no processo de compra:", err);
-        alert("Ocorreu um erro ao processar seu pedido. Tente novamente.");
-    }
-}
         // --- UTILITÁRIOS ---
         function openCartSidebar() { document.getElementById("cartSidebar").style.width = "300px"; }
         function closeCartSidebar() { document.getElementById("cartSidebar").style.width = "0"; }
@@ -510,6 +502,7 @@
     </script>
 </body>
 </html>
+
 
 
 
