@@ -333,7 +333,10 @@
         // --- PRODUTOS ---
         async function fetchProdutos() {
             const { data, error } = await supabaseClient.from('produtos').select('*').order('estoque', { ascending: false });
-            if (error) return;
+            if (error) {
+                console.error("Erro ao carregar produtos:", error);
+                return;
+            }
             produtos = data.map(i => ({ id: i.id, nome: i.nome, preco: i.preco, imagem: i.imagem_url, emEstoque: i.estoque > 0 }));
             filteredProducts = produtos;
             displayProducts(filteredProducts, searchResults, 1);
@@ -418,6 +421,7 @@
                 if (errPedido) throw errPedido;
 
                 // 2. Chama a Edge Function com Headers de Segurança
+                // ATENÇÃO: Aqui estava o erro. Os itens devem estar DENTRO do body, e o JSON.stringify deve abraçar tudo.
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
                     method: 'POST',
                     headers: { 
@@ -425,14 +429,22 @@
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
                     },
-                    itens: orcamentoItems.map(i => ({
-                        title: i.produto.nome,
-                        unit_price: Number(i.produto.preco), // Força ser número
-                        quantity: Number(i.quantidade),      // Força ser número
-                        currency_id: 'BRL'
-                    }))
+                    body: JSON.stringify({
+                        pedidoId: pedido[0].id,
+                        itens: orcamentoItems.map(i => ({
+                            title: i.produto.nome,
+                            unit_price: Number(i.produto.preco), // Força número
+                            quantity: Number(i.quantidade),      // Força número
+                            currency_id: 'BRL'
+                        }))
                     })
                 });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("Erro da Função:", errorText);
+                    throw new Error("Erro na resposta do servidor");
+                }
 
                 const data = await response.json();
                 if (data.url) {
@@ -442,8 +454,8 @@
                     alert("Erro ao gerar link de pagamento.");
                 }
             } catch (err) {
-                console.error(err);
-                alert("Erro ao processar compra. Verifique se a tabela 'pedidos' existe e se a Edge Function está ativa.");
+                console.error("Erro ao processar compra:", err);
+                alert("Erro ao processar compra. Verifique o console para detalhes.");
             }
         }
 
@@ -451,7 +463,14 @@
         function openCartSidebar() { document.getElementById("cartSidebar").style.width = "300px"; }
         function closeCartSidebar() { document.getElementById("cartSidebar").style.width = "0"; }
         function showToast(m) { const t = document.createElement('div'); t.className = 'toast show'; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2000); }
-        function expandImage(s) { /* Lógica de expansão de imagem */ }
+        function expandImage(s) { 
+            const div = document.createElement('div');
+            div.className = 'expanded-image-container';
+            div.innerHTML = `<img src="${s}" class="expanded-image"><span class="close-expanded-image">&times;</span>`;
+            div.querySelector('.close-expanded-image').onclick = () => div.remove();
+            div.onclick = (e) => { if (e.target === div) div.remove(); };
+            document.body.appendChild(div);
+        }
 
         window.addEventListener('load', () => {
             checkUser();
@@ -462,4 +481,3 @@
     </script>
 </body>
 </html>
-
