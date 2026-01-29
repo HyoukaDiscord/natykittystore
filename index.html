@@ -425,14 +425,12 @@
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
                     },
-                    body: JSON.stringify({
-                        pedidoId: pedido[0].id,
-                        itens: orcamentoItems.map(i => ({
-                            title: i.produto.nome,
-                            unit_price: i.produto.preco,
-                            quantity: i.quantidade,
-                            currency_id: 'BRL'
-                        }))
+                    itens: orcamentoItems.map(i => ({
+                        title: i.produto.nome,
+                        unit_price: Number(i.produto.preco), // Força ser número
+                        quantity: Number(i.quantidade),      // Força ser número
+                        currency_id: 'BRL'
+                    }))
                     })
                 });
 
@@ -464,3 +462,4 @@
     </script>
 </body>
 </html>
+
