@@ -385,8 +385,12 @@
                     </div>`;
             });
             if (orcamentoItems.length > 0) {
-                cartContent.innerHTML += `<hr><strong>Total: R$ ${total.toFixed(2)}</strong>
-                <button class="btn btn-comprar w-100 mt-2" onclick="finalizarCompra()">Pagar com PIX</button>`;
+                cartContent.innerHTML += `
+                    <hr>
+                    <strong>Total: R$ ${total.toFixed(2)}</strong>
+                    <button class="btn btn-comprar w-100 mt-2" onclick="finalizarCompra()">
+                        <i class="fas fa-pix"></i> Pagar com PIX
+                    </button>`;
             } else {
                 cartContent.innerHTML = '<p>Vazio</p>';
             }
@@ -480,3 +484,4 @@
     </script>
 </body>
 </html>
+
