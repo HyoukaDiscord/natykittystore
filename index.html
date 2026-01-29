@@ -410,21 +410,36 @@
         // --- FUNÇÃO CORRIGIDA DO MERCADO PAGO ---
         async function finalizarCompra() {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) { alert("Faça login primeiro!"); window.location.href="login.html"; return; }
+            if (!user) { 
+                alert("Faça login primeiro!"); 
+                window.location.href="login.html"; 
+                return; 
+            }
+            
             if (orcamentoItems.length === 0) return;
-
+        
             const total = orcamentoItems.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0);
-
+        
             try {
-                // 1. Salva o pedido
+                // 1. Salva o pedido na tabela 'pedidos'
                 const { data: pedido, error: errPedido } = await supabaseClient
                     .from('pedidos')
                     .insert([{ user_id: user.id, valor_total: total, status: 'pendente' }])
                     .select();
-
+        
                 if (errPedido) throw errPedido;
-
-                // 2. Chama a Edge Function com Headers de Segurança e JSON formatado corretamente
+        
+                // --- NOVO: RESERVA DE ESTOQUE ---
+                // Aqui percorremos os itens e diminuímos o estoque no banco de dados
+                for (const item of orcamentoItems) {
+                    const { error: errEstoque } = await supabaseClient.rpc('decrementar_estoque', { 
+                        row_id: item.produto.id 
+                    });
+                    if (errEstoque) console.error("Erro ao reservar item:", item.produto.nome, errEstoque);
+                }
+                // --------------------------------
+        
+                // 2. Chama a Edge Function para gerar o link do Mercado Pago
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
                     method: 'POST',
                     headers: { 
@@ -436,21 +451,22 @@
                         pedidoId: pedido[0].id,
                         itens: orcamentoItems.map(i => ({
                             title: i.produto.nome,
-                            unit_price: Number(i.produto.preco), // Força número
-                            quantity: Number(i.quantidade),      // Força número
+                            unit_price: Number(i.produto.preco),
+                            quantity: Number(i.quantidade),
                             currency_id: 'BRL'
                         }))
                     })
                 });
-
+        
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error("Erro da Função:", errorText);
                     throw new Error("Erro na resposta do servidor");
                 }
-
+        
                 const data = await response.json();
                 if (data.url) {
+                    // Limpa o carrinho local e redireciona para o pagamento
                     localStorage.removeItem('carrinho');
                     window.location.href = data.url;
                 } else {
@@ -484,4 +500,5 @@
     </script>
 </body>
 </html>
+
 
