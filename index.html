@@ -1172,8 +1172,41 @@ calcularSomaPrecos();
             createStars();
         });
     </script>
+
+
+
+
+
+
+
+
+    
+    <div id="popup-alerta" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:999999; align-items:center; justify-content:center;">
+    <div style="background:#fff; padding:30px; border-radius:8px; text-align:center; max-width:400px; width:85%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <h2 style="color:#ff0000; font-family:Arial, sans-serif; margin-top:0;">Manutenção!</h2>
+        <p style="color:#000; font-family:Arial, sans-serif; line-height:1.5;">
+            Para melhorar a experiência dos nossos usuários, estamos reformando nosso site. Logo mais voltaremos com novidades!
+        </p>
+        <button onclick="document.getElementById('popup-alerta').style.display='none'" style="margin-top:20px; background:#333; color:#fff; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; font-weight:bold;">
+            Fechar
+        </button>
+    </div>
+</div>
+
+<script>
+    // Exibe o popup assim que a página termina de carregar
+    window.addEventListener('load', function() {
+        document.getElementById('popup-alerta').style.display = 'flex';
+    });
+</script>
+
+
+
+
+    
 </body>
 </html>
+
 
 
 
